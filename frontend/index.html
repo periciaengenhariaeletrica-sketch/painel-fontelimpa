@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fonte Limpa - Dashboard</title>
+    <!-- Fontes modernas -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <style>
+        .period-box {
+            background-color: rgba(30,41,59,0.8);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 4px;
+            padding: 8px 16px;
+            color: #94a3b8;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .period-box:hover {
+            background-color: rgba(30,41,59,1);
+            border-color: rgba(255,255,255,0.1);
+        }
+        .period-box.selected {
+            background-color: rgba(16,185,129,0.1);
+            border-color: #10b981;
+            color: #10b981;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo-area" style="display: flex; flex-direction: column; align-items: center; padding: 20px 0;">
+                <div style="font-size: 32px; font-weight: 900; font-style: italic; letter-spacing: -2px;">
+                    <span style="color: white;">F</span><span style="color: #10b981;">L</span>
+                </div>
+                <div style="font-size: 16px; margin-top: 5px;">
+                    <span style="color: white; font-weight: 800;">FONTE </span><span style="color: #10b981; font-weight: 800;">LIMPA</span>
+                </div>
+                <div style="color: #94a3b8; font-size: 10px; font-weight: 600; letter-spacing: 1px; margin-top: 2px;">
+                    Energia Solar
+                </div>
+            </div>
+            
+            <ul class="nav-links">
+                <li class="active" onclick="switchTab('dashboard')">
+                    <i class='bx bxs-dashboard'></i>
+                    <span>Dashboard</span>
+                </li>
+                <li onclick="switchTab('emitir')">
+                    <i class='bx bx-file-blank'></i>
+                    <span>Emitir Relatórios</span>
+                </li>
+                <li onclick="switchTab('notas')">
+                    <i class='bx bx-receipt'></i>
+                    <span>Controle Contábil</span>
+                </li>
+                <li onclick="switchTab('rateio')">
+                    <i class='bx bx-pie-chart-alt-2'></i>
+                    <span>Rateio</span>
+                </li>
+            </ul>
+
+            <div class="user-profile">
+                <div class="avatar" style="background-color: #10b981;">FL</div>
+                <div class="user-info">
+                    <strong>Fonte Limpa</strong>
+                    <span>Admin</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header>
+                <div>
+                    <h1 id="page-title">Visão Geral</h1>
+                    <p id="page-subtitle">Acompanhe a economia e faturamento dos seus consórcios.</p>
+                </div>
+                <div class="header-actions">
+                    <div class="glass-btn"><i class='bx bx-bell'></i></div>
+                    <div class="glass-btn"><i class='bx bx-cog'></i></div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                
+                <!-- Tab: Dashboard -->
+                <section id="tab-dashboard" class="tab-content active" style="padding: 0; overflow: hidden; flex-direction: column;">
+                    <iframe src="/static/dashboard_frame.html?v=10" style="flex: 1; width: 100%; border: none; min-height: calc(100vh - 80px);"></iframe>
+                </section>
+
+                <!-- Tab: Emitir Relatorios -->
+                <section id="tab-emitir" class="tab-content">
+                    <div class="glass-card wizard-card">
+                        <!-- Wizard Steps -->
+                        <div class="wizard-step active" id="step-1">
+                            <h3 style="color: #94a3b8; margin-bottom: 15px; font-size: 11px; text-transform: uppercase; letter-spacing: 2px;">Período de Referência:</h3>
+                            <div id="period-selector" style="display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px;">
+                                <!-- Populated by JS -->
+                            </div>
+
+                            <div style="display: flex; gap: 20px; margin-bottom: 30px;">
+                                <div>
+                                    <h3 style="color: #94a3b8; margin-bottom: 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 2px;">Tarifa de Energia (R$/kWh c/ ICMS):</h3>
+                                    <input type="number" id="tarifa-cemig-input" step="0.000001" value="1.198400" style="background: rgba(30,41,59,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 10px; color: white; width: 200px; font-size: 14px;" placeholder="Ex: 1.154600">
+                                </div>
+                                <div>
+                                    <h3 style="color: #94a3b8; margin-bottom: 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 2px;">Tarifa Fio B (GD II) (Opcional):</h3>
+                                    <input type="number" id="tarifa-fiob-input" step="0.000001" value="0.19825" style="background: rgba(30,41,59,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 10px; color: white; width: 200px; font-size: 14px;" placeholder="Ex: 0.19825">
+                                </div>
+                            </div>
+                            <span style="color: #94a3b8; font-size: 12px; display: block; margin-bottom: 30px;">Preços praticados pela Cemig neste mês.</span>
+
+                            <h3 style="color: white; margin-bottom: 10px;">1. Selecione os Clientes</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 20px;">Escolha quais clientes você deseja gerar nesta remessa.</p>
+                            
+                            <div style="margin-bottom: 15px; display: none;">
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" id="check-all" onchange="toggleAllClients(this)"> <strong style="color: white;">Selecionar TODOS os clientes</strong>
+                                </label>
+                            </div>
+                            
+                            <div id="client-selection-list" class="clients-list">
+                                <!-- Populated by JS -->
+                            </div>
+                            
+                            <button class="btn btn-primary" onclick="nextStep(2)" style="margin-top: 20px;">Próximo Passo</button>
+                        </div>
+
+                        <div class="wizard-step locked" id="step-2">
+                            <h3 style="color: white; margin-bottom: 10px;">2. Automação Inteligente</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                                O robô descobrirá quais consórcios pertencem aos clientes selecionados. Ele vai abrir uma janela na sua tela para cada consórcio. 
+                                <strong>Apenas resolva o Captcha</strong> e clique em Entrar na janela que abrir. O robô faz o download e a geração matemática automaticamente!
+                            </p>
+                            
+                            <button id="btn-gerar" class="btn btn-primary" style="width: 100%; height: 60px; font-size: 1.1em;" onclick="baixarEGerar()">🚀 INICIAR AUTOMAÇÃO (BAIXAR E GERAR)</button>
+                        </div>
+
+                        <div class="wizard-step locked" id="step-3">
+                            <h3 style="color: white; margin-bottom: 10px;"><i class="fas fa-check-circle" style="margin-right: 10px; color: var(--success-green);"></i>3. Sucesso!</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 20px;">Suas faturas foram geradas com sucesso na pasta 'Relatorios_Enviados'.</p>
+                            
+                            <button class="btn btn-primary" onclick="location.reload()" style="background: rgba(255,255,255,0.1);">Fazer Nova Emissão</button>
+                            
+                            <div id="progress-container" style="display: none; margin-top: 20px;">
+                                <div class="loader"></div>
+                                <span id="progress-text">Processando...</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab: Notas Fiscais -->
+                <section id="tab-notas" class="tab-content">
+                    <div class="glass-card flex-center" style="min-height: 400px; text-align: center;">
+                        <i class='bx bx-spreadsheet' style="font-size: 64px; color: #10b981; margin-bottom: 20px;"></i>
+                        <h2>Controle de Emissão de Notas</h2>
+                        <p style="max-width: 500px; margin: 10px auto 30px auto; opacity: 0.8;">
+                            O sistema compila automaticamente o valor faturado de cada cliente mês a mês em uma planilha Excel unificada, pronta para envio à contabilidade.
+                        </p>
+                        
+                        <button class="btn-primary" onclick="window.location.href='/api/download_notas'">
+                            <i class='bx bx-download'></i> Baixar Planilha Excel
+                        </button>
+                    </div>
+                </section>
+                
+                <!-- Tab: Rateio -->
+                <section id="tab-rateio" class="tab-content">
+                    <div class="glass-card" style="padding: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h2 style="color: white; margin: 0;"><i class='bx bx-pie-chart-alt-2' style="color: #10b981;"></i> Rateio de Energia</h2>
+                            <button class="btn btn-primary" onclick="saveRateios()"><i class='bx bx-save'></i> Salvar Rateios</button>
+                        </div>
+                        <p style="color: var(--text-secondary); margin-bottom: 20px;">Abaixo estão os rateios por consórcio. A porcentagem e saldo são atualizados automaticamente quando você gera os relatórios. As colunas "Nova Porcentagem", "Alteração de Rateio" e "Email" são editáveis.</p>
+                        
+                        <div id="rateio-container">
+                            <div class="loader"></div>
+                            <span style="color: var(--text-secondary);">Carregando rateios...</span>
+                        </div>
+                    </div>
+                </section>
+                
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">Notificação</div>
+
+    <script src="/static/app.js?v=8"></script>
+</body>
+</html>
