@@ -6,9 +6,12 @@ import re
 import json
 import pandas as pd
 import datetime
-import asyncio
-import tkinter as tk
-from tkinter import simpledialog
+try:
+    import tkinter as tk
+    from tkinter import simpledialog
+except ImportError:
+    tk = None
+    simpledialog = None
 from playwright.async_api import async_playwright
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -115,20 +118,28 @@ def find_latest_period_and_files():
     return max_period, all_data
 
 def ask_manual_value(razao_social, competencia):
-    root = tk.Tk()
-    root.withdraw()
-    root.attributes('-topmost', True)
-    val = simpledialog.askfloat("Entrada Manual", f"Atenção! Insira o valor compensado (SCEE s/ ICMS) para {razao_social}\nCompetência da planilha: {competencia}\n", parent=root)
-    root.destroy()
-    return val
+    if tk is None or simpledialog is None:
+        return 0.0
+    try:
+        root = tk.Tk()
+        root.withdraw()
+        root.attributes('-topmost', True)
+        val = simpledialog.askfloat("Entrada Manual", f"Atenção! Insira o valor compensado (SCEE s/ ICMS) para {razao_social}\nCompetência da planilha: {competencia}\n", parent=root)
+        root.destroy()
+        return val
+    except:
+        return 0.0
 
 def select_clients(clientes):
-    root = tk.Tk()
-    root.title("Selecionar Clientes")
-    root.geometry("400x500")
-    root.attributes('-topmost', True)
-    
-    selected_cnpjs = []
+    if tk is None:
+        return list(clientes.keys())
+    try:
+        root = tk.Tk()
+        root.title("Selecionar Clientes")
+        root.geometry("400x500")
+        root.attributes('-topmost', True)
+        
+        selected_cnpjs = []
     
     tk.Label(root, text="Selecione os clientes para gerar relatório:", font=("Arial", 11, "bold")).pack(pady=10)
     
