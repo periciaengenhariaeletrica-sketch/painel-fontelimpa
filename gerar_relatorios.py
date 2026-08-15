@@ -140,63 +140,55 @@ def select_clients(clientes):
         root.attributes('-topmost', True)
         
         selected_cnpjs = []
-    
-    tk.Label(root, text="Selecione os clientes para gerar relatório:", font=("Arial", 11, "bold")).pack(pady=10)
-    
-    frame = tk.Frame(root)
-    frame.pack(fill="both", expand=True, padx=20)
-    
-    canvas = tk.Canvas(frame)
-    scrollbar = tk.Scrollbar(frame, orient="vertical", command=canvas.yview)
-    scrollable_frame = tk.Frame(canvas)
-    
-    scrollable_frame.bind(
-        "<Configure>",
-        lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
-    )
-    
-    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
-    canvas.configure(yscrollcommand=scrollbar.set)
-    
-    canvas.pack(side="left", fill="both", expand=True)
-    scrollbar.pack(side="right", fill="y")
-    
-    vars_dict = {}
-    var_all = tk.BooleanVar(value=True)
-    
-    def on_all_change():
-        state = var_all.get()
-        for v in vars_dict.values():
-            v.set(state)
+        
+        tk.Label(root, text="Selecione os clientes para gerar relatório:", font=("Arial", 11, "bold")).pack(pady=10)
+        
+        frame = tk.Frame(root)
+        frame.pack(fill="both", expand=True, padx=20)
+        
+        canvas = tk.Canvas(frame)
+        scrollbar = tk.Scrollbar(frame, orient="vertical", command=canvas.yview)
+        scrollable_frame = tk.Frame(canvas)
+        
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+        
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+        
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+        
+        vars_dict = {}
+        for cnpj, info in sorted(clientes.items(), key=lambda x: x[1]['razao_social']):
+            var = tk.BooleanVar(value=True)
+            cb = tk.Checkbutton(scrollable_frame, text=info['razao_social'][:40], variable=var)
+            cb.pack(anchor="w")
+            vars_dict[cnpj] = var
             
-    cb_all = tk.Checkbutton(root, text="Selecionar Todos", variable=var_all, command=on_all_change, font=("Arial", 10, "bold"))
-    cb_all.pack(pady=5)
-    
-    for cnpj, info in sorted(clientes.items(), key=lambda x: x[1]['razao_social']):
-        var = tk.BooleanVar(value=True)
-        cb = tk.Checkbutton(scrollable_frame, text=info['razao_social'][:40], variable=var)
-        cb.pack(anchor="w")
-        vars_dict[cnpj] = var
+        def on_confirm():
+            for cnpj, var in vars_dict.items():
+                if var.get():
+                    selected_cnpjs.append(cnpj)
+            root.destroy()
+            
+        def on_cancel():
+            root.destroy()
+            
+        btn_frame = tk.Frame(root)
+        btn_frame.pack(pady=15)
         
-    def on_confirm():
-        for cnpj, var in vars_dict.items():
-            if var.get():
-                selected_cnpjs.append(cnpj)
-        root.destroy()
+        tk.Button(btn_frame, text="Gerar Relatórios", command=on_confirm, bg="#10b981", fg="white", font=("Arial", 10, "bold")).pack(side="left", padx=10)
+        tk.Button(btn_frame, text="Cancelar", command=on_cancel).pack(side="left", padx=10)
         
-    def on_cancel():
-        root.destroy()
+        root.protocol("WM_DELETE_WINDOW", on_cancel)
+        root.mainloop()
         
-    btn_frame = tk.Frame(root)
-    btn_frame.pack(pady=15)
-    
-    tk.Button(btn_frame, text="Gerar Relatórios", command=on_confirm, bg="#10b981", fg="white", font=("Arial", 10, "bold")).pack(side="left", padx=10)
-    tk.Button(btn_frame, text="Cancelar", command=on_cancel).pack(side="left", padx=10)
-    
-    root.protocol("WM_DELETE_WINDOW", on_cancel)
-    root.mainloop()
-    
-    return selected_cnpjs
+        return selected_cnpjs
+    except:
+        return list(clientes.keys())
 
 def export_invoice_spreadsheet(db_clientes, ano_ref):
     import pandas as pd
