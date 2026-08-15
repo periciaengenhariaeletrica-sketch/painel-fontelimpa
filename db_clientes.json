@@ -1,0 +1,823 @@
+{
+    "clientes": {
+        "05.037.504/0001-08": {
+            "ucs": [
+                "3000168113"
+            ],
+            "razao_social": "EXPRESSA GULA RESTAURANTE DE LANCHONETE LTDA",
+            "cnpj": "05.037.504/0001-08",
+            "consorcio": "CONSORCIO UFV FB",
+            "tarifa_cemig": 1.20907534,
+            "tarifa_cons": 0.9672602720000001,
+            "desconto_pct": 20,
+            "economia_acumulada": 3628.25,
+            "historico_mensal": [
+                {
+                    "periodo": "06/2026",
+                    "economia_mes": 966.72,
+                    "valor_pagar": 3866.88
+                },
+                {
+                    "periodo": "05/2026",
+                    "economia_mes": 879.97,
+                    "valor_pagar": 3519.89
+                },
+                {
+                    "periodo": "04/2026",
+                    "economia_mes": 928.38,
+                    "valor_pagar": 3713.53
+                },
+                {
+                    "periodo": "02/2026",
+                    "economia_mes": 853.18
+                }
+            ],
+            "ultimo_mes_fechado": "06/2026",
+            "empresa_lider": "FB ENERGY",
+            "usina": "CONSORCIO UFV FB",
+            "tirar_nota": "NÃO",
+            "consorcios_scraper": [
+                "UFV FB"
+            ]
+        },
+        "65.174.641/0001-08": {
+            "ucs": [
+                "3001777063"
+            ],
+            "razao_social": "CONDOMINIO EDIFICIO ROZEN",
+            "cnpj": "65.174.641/0001-08",
+            "consorcio": "CONSORCIO UFV FB",
+            "tarifa_cemig": 1.20907534,
+            "tarifa_cons": 0.9672602720000001,
+            "desconto_pct": 20,
+            "economia_acumulada": 2951.33562,
+            "historico_mensal": [
+                {
+                    "periodo": "07/2026",
+                    "economia_mes": 680.71,
+                    "valor_pagar": 2722.84
+                },
+                {
+                    "periodo": "06/2026",
+                    "economia_mes": 590.4,
+                    "valor_pagar": 2361.6
+                },
+                {
+                    "periodo": "05/2026",
+                    "economia_mes": 640.16,
+                    "valor_pagar": 2560.65
+                },
+                {
+                    "periodo": "04/2026",
+                    "economia_mes": 535.23,
+                    "valor_pagar": 2140.93
+                },
+                {
+                    "periodo": "02/2026",
+                    "economia_mes": 504.83562
+                }
+            ],
+            "ultimo_mes_fechado": "07/2026",
+            "empresa_lider": "FB ENERGY",
+            "usina": "CONSORCIO UFV FB",
+            "tirar_nota": "NÃO",
+            "consorcios_scraper": [
+                "UFV FB"
+            ]
+        },
+        "05.230.418/0001-09": {
+            "ucs": [
+                "3005608159"
+            ],
+            "razao_social": "CONDOMINIO EDIFICIO NIRVANA",
+            "cnpj": "05.230.418/0001-09",
+            "consorcio": "CONSORCIO UFV FB",
+            "tarifa_cemig": 1.20907534,
+            "tarifa_cons": 0.9672602720000001,
+            "desconto_pct": 20,
+            "economia_acumulada": 5121.73888,
+            "historico_mensal": [
+                {
+                    "periodo": "07/2026",
+                    "economia_mes": 1310.64,
+                    "valor_pagar": 5242.55
+                },
+                {
+                    "periodo": "06/2026",
+                    "economia_mes": 1185.6,
+                    "valor_pagar": 4742.4
+                },
+                {
+                    "periodo": "05/2026",
+                    "economia_mes": 950.22,
+                    "valor_pagar": 3800.9
+                },
+                {
+                    "periodo": "04/2026",
+                    "economia_mes": 878.17,
+                    "valor_pagar": 3512.68
+                },
+                {
+                    "periodo": "02/2026",
+                    "economia_mes": 797.10888
+                }
+            ],
+            "ultimo_mes_fechado": "07/2026",
+            "empresa_lider": "FB ENERGY",
+            "usina": "CONSORCIO UFV FB",
+            "tirar_nota": "NÃO",
+            "consorcios_scraper": [
+                "UFV FB"
+            ]
+        },
+        "35.271.573/0001-34": {
+            "ucs": [
+                "3000287185"
+            ],
+            "razao_social": "GLOBO EIRELI",
+            "cnpj": "35.271.573/0001-34",
+            "consorcio": "CONSORCIO UFV SOLARDONORTE",
+            "tarifa_cemig": 1.17439475,
+            "tarifa_cons": 0.8807960625,
+            "desconto_pct": 25,
+            "economia_acumulada": 78511.48,
+            "historico_mensal": [
+                {
+                    "periodo": "07/2026",
+                    "economia_mes": 24283.0,
+                    "valor_pagar": 67829.77
+                },
+                {
+                    "periodo": "06/2026",
+                    "economia_mes": 17621.47,
+                    "valor_pagar": 52864.41
+                },
+                {
+                    "periodo": "05/2026",
+                    "economia_mes": 6611.45,
+                    "valor_pagar": 0
+                },
+                {
+                    "periodo": "04/2026",
+                    "economia_mes": 5242.56,
+                    "valor_pagar": 0
+                },
+                {
+                    "periodo": "03/2026",
+                    "economia_mes": 6778.51,
+                    "valor_pagar": 0
+                },
+                {
+                    "periodo": "02/2026",
+                    "economia_mes": 6078.51,
+                    "valor_pagar": 0
+                },
+                {
+                    "periodo": "01/2026",
+                    "economia_mes": 6623.69,
+                    "valor_pagar": 0
+                },
+                {
+                    "periodo": "12/2025",
+                    "economia_mes": 5272.29,
+                    "valor_pagar": 0
+                }
+            ],
+            "ultimo_mes_fechado": "07/2026",
+            "pede_entrada_manual": false,
+            "dia_vencimento": 12,
+            "empresa_lider": "W 23 ENERGY",
+            "usina": "CONSORCIO UFV SANTA DA PEDRA",
+            "tirar_nota": "NÃO",
+            "consorcios_scraper": [
+                "UFV SOLAR DO NORTE",
+                "UFV SANTA DA PEDRA (JULIANO)",
+                "UFV FONTE LIMPA I (ULYANA)",
+                "UFV FONTE LIMPA II (NOVA SERRANA)"
+            ]
+        },
+        "50.941.048/0001-72": {
+            "ucs": [
+                "3000889842"
+            ],
+            "razao_social": "EDIFICIO RESIDENCIAL VERMONT",
+            "cnpj": "50.941.048/0001-72",
+            "consorcio": "CONSORCIO UFV SOLARDONORTE",
+            "tarifa_cemig": 1.20907534,
+            "tarifa_cons": 0.9672602720000001,
+            "desconto_pct": 20,
+            "economia_acumulada": 8919.872378,
+            "historico_mensal": [
+                {
+                    "periodo": "07/2026",
+                    "economia_mes": 808.63,
+                    "valor_pagar": 3234.52
+                },
+                {
+                    "periodo": "06/2026",
+                    "economia_mes": 557.04,
+                    "valor_pagar": 2228.16
+                },
+                {
+                    "periodo": "05/2026",
+                    "economia_mes": 393.38,
+                    "valor_pagar": 1573.5
+                },
+                {
+                    "periodo": "04/2026",
+                    "economia_mes": 408.41,
+                    "valor_pagar": 1225.22
+                },
+                {
+                    "periodo": "03/2026",
+                    "economia_mes": 409.3627
+                },
+                {
+                    "periodo": "02/2026",
+                    "economia_mes": 503.258928
+                },
+                {
+                    "periodo": "01/2026",
+                    "economia_mes": 398.23525
+                },
+                {
+                    "periodo": "12/2025",
+                    "economia_mes": 363.7645
+                },
+                {
+                    "periodo": "11/2025",
+                    "economia_mes": 497.06
+                },
+                {
+                    "periodo": "10/2025",
+                    "economia_mes": 508.08
+                },
+                {
+                    "periodo": "09/2025",
+                    "economia_mes": 545.04975
+                },
+                {
+                    "periodo": "08/2025",
+                    "economia_mes": 505.60125
+                },
+                {
+                    "periodo": "07/2025",
+                    "economia_mes": 908.08125
+                },
+                {
+                    "periodo": "06/2025",
+                    "economia_mes": 908.08125
+                },
+                {
+                    "periodo": "05/2025",
+                    "economia_mes": 687.96
+                },
+                {
+                    "periodo": "04/2025",
+                    "economia_mes": 345.42
+                },
+                {
+                    "periodo": "03/2025",
+                    "economia_mes": 172.4575
+                }
+            ],
+            "ultimo_mes_fechado": "07/2026",
+            "empresa_lider": "W 23 ENERGY",
+            "usina": "CONSORCIO UFV SOLARDONORTE",
+            "tirar_nota": "SIM",
+            "consorcios_scraper": [
+                "UFV SOLAR DO NORTE"
+            ],
+            "dia_vencimento": 16
+        },
+        "35.743.403/0001-05": {
+            "ucs": [
+                "3014796929",
+                "3013368708",
+                "3000882584"
+            ],
+            "razao_social": "CASA CORACAO DE JESUS RUA E SAO RAFAEL",
+            "cnpj": "35.743.403/0001-05",
+            "consorcio": "CONSORCIO UFV SOLARDONORTE",
+            "tarifa_cemig": 1.20907534,
+            "tarifa_cons": 0.9672602720000001,
+            "desconto_pct": 20,
+            "economia_acumulada": 638.37,
+            "historico_mensal": [
+                {
+                    "periodo": "07/2026",
+                    "economia_mes": 152.34,
+                    "valor_pagar": 609.37
+                },
+                {
+                    "periodo": "06/2026",
+                    "economia_mes": 132.96,
+                    "valor_pagar": 531.84
+                },
+                {
+                    "periodo": "05/2026",
+                    "economia_mes": 145.24,
+                    "valor_pagar": 580.94
+                },
+                {
+                    "periodo": "04/2026",
+                    "economia_mes": 111.69,
+                    "valor_pagar": 446.74
+                },
+                {
+                    "periodo": "03/2026",
+                    "economia_mes": 96.14
+                }
+            ],
+            "ultimo_mes_fechado": "07/2026",
+            "empresa_lider": "W 23 ENERGY",
+            "usina": "CONSORCIO UFV SOLARDONORTE",
+            "tirar_nota": "SIM",
+            "consorcios_scraper": [
+                "UFV SOLAR DO NORTE"
+            ]
+        },
+        "12.720.927/0001-85": {
+            "ucs": [
+                "3007049761"
+            ],
+            "razao_social": "CONDOMINIO EDIFICIO MAURA VALADARES",
+            "cnpj": "12.720.927/0001-85",
+            "consorcio": "CONSORCIO UFV SANTA CLARA",
+            "tarifa_cemig": 1.2,
+            "tarifa_cons": 0.96,
+            "desconto_pct": 20,
+            "economia_acumulada": 6043.2,
+            "historico_mensal": [
+                {
+                    "periodo": "06/2026",
+                    "economia_mes": 2107.2,
+                    "valor_pagar": 8428.8
+                },
+                {
+                    "periodo": "05/2026",
+                    "economia_mes": 1796.87,
+                    "valor_pagar": 7187.48
+                },
+                {
+                    "periodo": "04/2026",
+                    "economia_mes": 2139.13,
+                    "valor_pagar": 8556.53
+                }
+            ],
+            "ultimo_mes_fechado": "06/2026",
+            "empresa_lider": "W 23 ENERGY",
+            "usina": "CONSORCIO UFV SANTA CLARA",
+            "tirar_nota": "SIM",
+            "consorcios_scraper": [
+                "UFV SANTA CLARA"
+            ]
+        },
+        "20.186.219/0001-34": {
+            "ucs": [
+                "3001776932"
+            ],
+            "razao_social": "CONDOMINIO EDIFICIO SAO JOAO DE DEUS",
+            "cnpj": "20.186.219/0001-34",
+            "consorcio": "CONSORCIO UFV SANTA CLARA",
+            "tarifa_cemig": 1.2,
+            "tarifa_cons": 0.96,
+            "desconto_pct": 20,
+            "economia_acumulada": 2001.4,
+            "historico_mensal": [
+                {
+                    "periodo": "06/2026",
+                    "economia_mes": 686.4,
+                    "valor_pagar": 2745.6
+                },
+                {
+                    "periodo": "05/2026",
+                    "economia_mes": 671.01,
+                    "valor_pagar": 2684.05
+                },
+                {
+                    "periodo": "04/2026",
+                    "economia_mes": 643.99,
+                    "valor_pagar": 2575.96
+                }
+            ],
+            "ultimo_mes_fechado": "06/2026",
+            "empresa_lider": "FB ENERGY",
+            "usina": "CONSORCIO UFV FB",
+            "tirar_nota": "NÃO",
+            "consorcios_scraper": [
+                "UFV SANTA CLARA",
+                "UFV FB"
+            ]
+        },
+        "25.460.858/0001-60": {
+            "ucs": [
+                "3003773148"
+            ],
+            "razao_social": "CONDOMINIO DO EDIFICIO AMAZONIA",
+            "cnpj": "25.460.858/0001-60",
+            "consorcio": "CONSORCIO UFV SANTA CLARA",
+            "tarifa_cemig": 1.20907534,
+            "tarifa_cons": 0.9672602720000001,
+            "desconto_pct": 20,
+            "economia_acumulada": 723.54,
+            "historico_mensal": [
+                {
+                    "periodo": "06/2026",
+                    "economia_mes": 190.56,
+                    "valor_pagar": 762.24
+                },
+                {
+                    "periodo": "05/2026",
+                    "economia_mes": 179.01,
+                    "valor_pagar": 716.05
+                },
+                {
+                    "periodo": "04/2026",
+                    "economia_mes": 168.43,
+                    "valor_pagar": 673.71
+                },
+                {
+                    "periodo": "02/2026",
+                    "economia_mes": 185.54
+                }
+            ],
+            "ultimo_mes_fechado": "06/2026",
+            "empresa_lider": "W 23 ENERGY",
+            "usina": "CONSORCIO UFV SANTA CLARA",
+            "tirar_nota": "SIM",
+            "consorcios_scraper": [
+                "UFV SANTA CLARA"
+            ]
+        },
+        "38.370.669/0001-48": {
+            "ucs": [
+                "3003122189"
+            ],
+            "razao_social": "CONSORCIO SANTA CLARA (SALITRE)",
+            "cnpj": "38.370.669/0001-48",
+            "consorcio": "CONSORCIO UFV SANTA CLARA",
+            "tarifa_cemig": 1.20907534,
+            "tarifa_cons": 0.9672602720000001,
+            "desconto_pct": 20,
+            "economia_acumulada": 446.5,
+            "historico_mensal": [
+                {
+                    "periodo": "07/2026",
+                    "economia_mes": 144.61,
+                    "valor_pagar": 578.42
+                },
+                {
+                    "periodo": "06/2026",
+                    "economia_mes": 137.52,
+                    "valor_pagar": 550.08
+                },
+                {
+                    "periodo": "05/2026",
+                    "economia_mes": 37.6,
+                    "valor_pagar": 150.41
+                },
+                {
+                    "periodo": "04/2026",
+                    "economia_mes": 126.77,
+                    "valor_pagar": 507.09
+                }
+            ],
+            "ultimo_mes_fechado": "07/2026",
+            "empresa_lider": "W 23 ENERGY",
+            "usina": "CONSORCIO UFV SANTA CLARA",
+            "tirar_nota": "SIM",
+            "consorcios_scraper": [
+                "UFV SANTA CLARA"
+            ]
+        },
+        "11.625.943/0001-26": {
+            "ucs": [
+                "3007676365"
+            ],
+            "razao_social": "CONDOMINIO VILLAGGIO DEL VENETO",
+            "cnpj": "11.625.943/0001-26",
+            "consorcio": "CONSORCIO UFV FONTE LIMPA",
+            "tarifa_cemig": 1.20907534,
+            "tarifa_cons": 0.9672602720000001,
+            "desconto_pct": 20,
+            "economia_acumulada": 13013.17,
+            "historico_mensal": [
+                {
+                    "periodo": "07/2026",
+                    "economia_mes": 3240.32,
+                    "valor_pagar": 12961.29
+                },
+                {
+                    "periodo": "06/2026",
+                    "economia_mes": 4598.4,
+                    "valor_pagar": 18393.6
+                },
+                {
+                    "periodo": "05/2026",
+                    "economia_mes": 3521.69,
+                    "valor_pagar": 14086.75
+                },
+                {
+                    "periodo": "04/2026",
+                    "economia_mes": 1652.76,
+                    "valor_pagar": 6611.04
+                }
+            ],
+            "ultimo_mes_fechado": "07/2026",
+            "empresa_lider": "W 23 ENERGY",
+            "usina": "UFV FONTE LIMPA",
+            "tirar_nota": "SIM",
+            "consorcios_scraper": [
+                "UFV FONTE LIMPA I (ULYANA)",
+                "UFV INHAÚMA"
+            ]
+        },
+        "02.044.317/0001-55": {
+            "ucs": [
+                "3004548113"
+            ],
+            "razao_social": "CONDOMINIO OLIMPO",
+            "cnpj": "02.044.317/0001-55",
+            "consorcio": "CONSORCIO UFV FONTE LIMPA",
+            "tarifa_cemig": 1.20907534,
+            "tarifa_cons": 0.9672602720000001,
+            "desconto_pct": 20,
+            "economia_acumulada": 775.06,
+            "historico_mensal": [
+                {
+                    "periodo": "06/2026",
+                    "economia_mes": 251.76,
+                    "valor_pagar": 1007.04
+                },
+                {
+                    "periodo": "05/2026",
+                    "economia_mes": 268.86,
+                    "valor_pagar": 1075.42
+                },
+                {
+                    "periodo": "04/2026",
+                    "economia_mes": 254.44,
+                    "valor_pagar": 1017.78
+                }
+            ],
+            "ultimo_mes_fechado": "06/2026",
+            "consorcios_scraper": [
+                "UFV FONTE LIMPA I (ULYANA)"
+            ]
+        },
+        "22.440.929/0001-74": {
+            "ucs": [
+                "3014316328",
+                "3014316329"
+            ],
+            "razao_social": "SNEF BRASIL",
+            "cnpj": "22.440.929/0001-74",
+            "consorcio": "CONSORCIO UFV FONTE LIMPA II",
+            "tarifa_cemig": 1.20907534,
+            "tarifa_cons": 0.9672602720000001,
+            "desconto_pct": 20,
+            "economia_acumulada": 66976.69,
+            "historico_mensal": [
+                {
+                    "periodo": "07/2026",
+                    "economia_mes": 2463.34,
+                    "valor_pagar": 4162.39
+                },
+                {
+                    "periodo": "06/2026",
+                    "economia_mes": 2434.89,
+                    "valor_pagar": 4228.21
+                },
+                {
+                    "periodo": "05/2026",
+                    "economia_mes": 1315.0,
+                    "valor_pagar": 5260.01
+                },
+                {
+                    "periodo": "04/2026",
+                    "economia_mes": 1414.08,
+                    "valor_pagar": 5656.31
+                }
+            ],
+            "ultimo_mes_fechado": "07/2026",
+            "empresa_lider": "V2E",
+            "usina": "UFV FONTE LIMPA II",
+            "tirar_nota": "SIM",
+            "consorcios_scraper": [
+                "UFV FONTE LIMPA II (NOVA SERRANA)"
+            ],
+            "dia_vencimento": null,
+            "base_economia_acumulada": 59349.38
+        },
+        "12.862.303/0001-00": {
+            "ucs": [
+                "3004843618",
+                "3010610056"
+            ],
+            "razao_social": "COMERCIAL CERRADO LTDA",
+            "cnpj": "12.862.303/0001-00",
+            "consorcio": "CONSORCIO UFV FONTE LIMPA II",
+            "tarifa_cemig": 1.20907534,
+            "tarifa_cons": 0.9672602720000001,
+            "desconto_pct": 20,
+            "economia_acumulada": 2352.33,
+            "historico_mensal": [
+                {
+                    "periodo": "06/2026",
+                    "economia_mes": 1093.84,
+                    "valor_pagar": 1889.36
+                },
+                {
+                    "periodo": "05/2026",
+                    "economia_mes": 606.84,
+                    "valor_pagar": 2427.35
+                },
+                {
+                    "periodo": "04/2026",
+                    "economia_mes": 651.65,
+                    "valor_pagar": 2606.59
+                }
+            ],
+            "ultimo_mes_fechado": "06/2026",
+            "empresa_lider": "W 23 ENERGY",
+            "usina": "UFV FONTE LIMPA II",
+            "tirar_nota": "NÃO",
+            "consorcios_scraper": [
+                "UFV FONTE LIMPA II (NOVA SERRANA)"
+            ]
+        },
+        "45.413.474/0001-01": {
+            "ucs": [
+                "3010563962"
+            ],
+            "razao_social": "VALENTIM ENERGIA E ENGENHARIA LTDA",
+            "cnpj": "45.413.474/0001-01",
+            "consorcio": "CONSORCIO UFV FONTE LIMPA II",
+            "tarifa_cemig": 1.20907534,
+            "tarifa_cons": 0.9672602720000001,
+            "desconto_pct": 20,
+            "economia_acumulada": 367.61,
+            "historico_mensal": [
+                {
+                    "periodo": "07/2026",
+                    "economia_mes": 107.27,
+                    "valor_pagar": 181.26
+                },
+                {
+                    "periodo": "06/2026",
+                    "economia_mes": 131.65,
+                    "valor_pagar": 227.4
+                },
+                {
+                    "periodo": "05/2026",
+                    "economia_mes": 69.12,
+                    "valor_pagar": 276.49
+                },
+                {
+                    "periodo": "04/2026",
+                    "economia_mes": 59.57,
+                    "valor_pagar": 238.28
+                }
+            ],
+            "ultimo_mes_fechado": "07/2026",
+            "empresa_lider": "W 23 ENERGY",
+            "usina": "UFV FONTE LIMPA II",
+            "tirar_nota": "SIM",
+            "consorcios_scraper": [
+                "UFV FONTE LIMPA II (NOVA SERRANA)"
+            ]
+        },
+        "31.865.220/0001-01": {
+            "ucs": [
+                "3014165998",
+                "3000946573"
+            ],
+            "razao_social": "GERSON SOUZA SILVA",
+            "cnpj": "31.865.220/0001-01",
+            "consorcio": "CONSORCIO UFV INHAUMA",
+            "tarifa_cemig": 1.20907534,
+            "tarifa_cons": 0.9672602720000001,
+            "desconto_pct": 20,
+            "economia_acumulada": 592.62,
+            "historico_mensal": [
+                {
+                    "periodo": "06/2026",
+                    "economia_mes": 557.28,
+                    "valor_pagar": 2229.12
+                },
+                {
+                    "periodo": "05/2026",
+                    "economia_mes": 16.76,
+                    "valor_pagar": 67.03
+                },
+                {
+                    "periodo": "04/2026",
+                    "economia_mes": 18.58,
+                    "valor_pagar": 74.32
+                }
+            ],
+            "ultimo_mes_fechado": "06/2026",
+            "empresa_lider": "W 23 ENERGY",
+            "usina": "UFV INHAUMA",
+            "tirar_nota": "NÃO",
+            "consorcios_scraper": [
+                "UFV FONTE LIMPA I (ULYANA)",
+                "UFV INHAÚMA"
+            ]
+        },
+        "07.771.455/0001-50": {
+            "ucs": [
+                "3002083978"
+            ],
+            "razao_social": "PEDRA DE GELO",
+            "cnpj": "07.771.455/0001-50",
+            "consorcio": "CONSORCIO UFV INHAUMA",
+            "tarifa_cemig": 1.20907534,
+            "tarifa_cons": 0.9672602720000001,
+            "desconto_pct": 20,
+            "economia_acumulada": 5201.43,
+            "historico_mensal": [
+                {
+                    "periodo": "06/2026",
+                    "economia_mes": 2116.8,
+                    "valor_pagar": 8467.2
+                },
+                {
+                    "periodo": "05/2026",
+                    "economia_mes": 2184.17,
+                    "valor_pagar": 8736.67
+                },
+                {
+                    "periodo": "04/2026",
+                    "economia_mes": 900.46,
+                    "valor_pagar": 3601.85
+                }
+            ],
+            "ultimo_mes_fechado": "06/2026",
+            "pede_entrada_manual": false,
+            "empresa_lider": "W 23 ENERGY",
+            "usina": "UFV FONTE LIMPA",
+            "tirar_nota": "NÃO",
+            "consorcios_scraper": [
+                "UFV FONTE LIMPA I (ULYANA)",
+                "UFV INHAÚMA"
+            ]
+        },
+        "UC_3005908408": {
+            "ucs": [
+                "3005908408"
+            ],
+            "razao_social": "SUPERMERCADO AVIAO",
+            "cnpj": "",
+            "consorcio": "CONSORCIO UFV INHAUMA",
+            "tarifa_cemig": 1.125859,
+            "tarifa_cons": 0.900687,
+            "desconto_pct": 20,
+            "economia_acumulada": 0,
+            "historico_mensal": [],
+            "ultimo_mes_fechado": "",
+            "empresa_lider": "W 23 ENERGY",
+            "usina": "UFV INHAUMA",
+            "tirar_nota": "SIM"
+        },
+        "20.969.747/0005-93": {
+            "ucs": [
+                "3001777001"
+            ],
+            "razao_social": "Labo Cito Exames Citologicos LTDA",
+            "cnpj": "20.969.747/0005-93",
+            "consorcio": "CONSORCIO UFV FB",
+            "empresa_lider": "FB ENERGY",
+            "usina": "UFV FB",
+            "tirar_nota": "NÃO",
+            "tarifa_cemig": 1.20907534,
+            "tarifa_cons": 0.9672602720000001,
+            "desconto_pct": 20,
+            "economia_acumulada": 538.15,
+            "historico_mensal": [
+                {
+                    "periodo": "07/2026",
+                    "economia_mes": 265.27,
+                    "valor_pagar": 1061.08
+                },
+                {
+                    "periodo": "06/2026",
+                    "economia_mes": 272.88,
+                    "valor_pagar": 1091.52
+                }
+            ],
+            "ultimo_mes_fechado": "07/2026",
+            "consorcios_scraper": [
+                "UFV FB"
+            ]
+        }
+    },
+    "entradas_manuais": {
+        "04/2026": {
+            "07.771.455/0001-50": 3999.0,
+            "35.271.573/0001-34": 18626.0
+        }
+    },
+    "rateios_custom": {}
+}
