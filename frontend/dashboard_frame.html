@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Dashboard Rateio GD — CEMIG</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0f1a">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0a0f1a;
+    --bg2: #0f1624;
+    --bg3: #141d2e;
+    --card: #111827;
+    --border: #1e2d47;
+    --accent: #00d4aa;
+    --accent2: #f59e0b;
+    --accent3: #ef4444;
+    --accent4: #6366f1;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BG grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(0,212,170,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,170,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper { position: relative; z-index: 1; padding: 24px; max-width: 1600px; margin: 0 auto; }
+
+  /* HEADER */
+  header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-left h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .header-left p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 6px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .header-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: rgba(0,212,170,0.08);
+    border: 1px solid rgba(0,212,170,0.25);
+    color: var(--accent);
+    padding: 6px 14px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .btn-refresh {
+    background: rgba(0, 212, 170, 0.12);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+  }
+  .btn-refresh:hover {
+    background: var(--accent);
+    color: #0a0f1a;
+    box-shadow: 0 0 12px rgba(0, 212, 170, 0.4);
+  }
+
+  /* PERIOD SELECTOR */
+  .period-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+  .period-bar label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    white-space: nowrap;
+  }
+  .period-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+  }
+  .period-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .period-btn.active {
+    background: rgba(0,212,170,0.12);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* KPI CARDS */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+  .kpi-card.yellow::before { background: var(--yellow); }
+  .kpi-card.red::before { background: var(--red); }
+  .kpi-card.purple::before { background: var(--accent4); }
+  .kpi-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text3);
+    margin-bottom: 8px;
+  }
+  .kpi-value {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+  }
+  .kpi-value.green { color: var(--green); }
+  .kpi-value.yellow { color: var(--yellow); }
+  .kpi-value.red { color: var(--red); }
+  .kpi-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    margin-top: 6px;
+  }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text3);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* MAIN GRID */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
+
+  /* CHART CARD */
+  .chart-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .chart-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .chart-title span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(0,212,170,0.08);
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-left: 8px;
+  }
+  .canvas-wrap { position: relative; height: 260px; }
+
+  /* USINA SELECTOR */
+  .usina-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .usina-tab {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 6px 14px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text3);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .usina-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .usina-tab.active {
+    background: rgba(0,212,170,0.12);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* RECEBEDORAS TABLE */
+  .table-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .table-card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text3);
+    padding: 10px 16px;
+    text-align: left;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(30,45,71,0.5);
+    color: var(--text2);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* RATEIO VISUAL */
+  .quota-bar-wrap { width: 100%; background: rgba(255,255,255,0.05); border-radius: 3px; height: 6px; }
+  .quota-bar { height: 6px; border-radius: 3px; background: var(--accent); transition: width 0.4s; }
+  .quota-bar.over { background: var(--red); }
+  .quota-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .saldo-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text2);
+  }
+  .saldo-num.alto { color: var(--yellow); }
+  .badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+  .badge.ok { background: rgba(16,185,129,0.12); color: var(--green); }
+  .badge.warn { background: rgba(245,158,11,0.12); color: var(--yellow); }
+  .badge.crit { background: rgba(239,68,68,0.12); color: var(--red); }
+
+  /* EFICIÊNCIA DONUT GRID */
+  .donut-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .donut-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .donut-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .donut-card.selected { border-color: var(--accent); background: rgba(0,212,170,0.04); }
+  .donut-name {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text3);
+    margin-bottom: 10px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .donut-wrap { position: relative; width: 90px; height: 90px; margin: 0 auto 10px; }
+  .donut-pct {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+  }
+  .donut-gen {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+  }
+  .donut-gen b { color: var(--text2); }
+
+  /* FOOTER */
+  footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  footer p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-right: 6px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(10, 15, 26, 0.85); backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center; z-index: 1000;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-content {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; width: 90%; max-width: 600px; max-height: 80vh;
+    display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+  .modal-header {
+    padding: 20px 24px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-title { font-size: 16px; font-weight: 700; color: var(--text); }
+  .modal-close {
+    background: transparent; border: none; color: var(--text3); font-size: 24px;
+    cursor: pointer; line-height: 1; transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--red); }
+  .modal-body { padding: 0; overflow-y: auto; }
+  .modal-table { width: 100%; border-collapse: collapse; }
+  .modal-table th {
+    background: rgba(0,0,0,0.2); padding: 12px 24px; text-align: left;
+    font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: 1px;
+    text-transform: uppercase; border-bottom: 1px solid var(--border); position: sticky; top: 0;
+  }
+  .modal-table td {
+    padding: 14px 24px; border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .clickable-card { cursor: pointer; transition: transform 0.15s, border-color 0.15s; }
+  .clickable-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <header>
+    <div class="header-left">
+      <h1>Dashboard Rateio GD</h1>
+      <p>Geração Compartilhada CEMIG · Consórcios UFV · Fonte Limpa Energia</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <button class="btn-refresh" onclick="forceAppRefresh()" title="Atualizar dados do aplicativo">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="refresh-icon"><path d="M21.5 2v6h-6M2.13 15.57a10 10 0 1 0 3.93-9.57L2.5 8"/></svg>
+        <span>Atualizar</span>
+      </button>
+      <span class="header-badge"><span class="dot"></span>7 Usinas Ativas</span>
+      <span class="header-badge" id="badge-periodo">—</span>
+    </div>
+  </header>
+
+  <!-- PERIOD SELECTOR -->
+  <div class="period-bar">
+    <label>Período de referência:</label>
+    <div id="period-buttons"></div>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div class="kpi-grid" id="kpi-grid"></div>
+
+  <!-- EFICIÊNCIA POR USINA (DONUTS) -->
+  <div class="section-title">Eficiência de Distribuição por Usina</div>
+  <div class="donut-grid" id="donut-grid"></div>
+
+  <!-- CHARTS -->
+  <div class="main-grid">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">Geração vs Recebimento<span id="chart-usina-label">Todas</span></div>
+      </div>
+      <div class="canvas-wrap"><canvas id="chartGerRec"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">Rateio Atual das Recebedoras<span id="chart-rateio-label">—</span></div>
+      </div>
+      <div class="canvas-wrap"><canvas id="chartRateio"></canvas></div>
+    </div>
+  </div>
+
+  <!-- USINA SELECTOR -->
+  <div class="section-title">Detalhamento por Instalação</div>
+  <div class="usina-tabs" id="usina-tabs"></div>
+
+  <!-- TABLE -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <span class="chart-title" id="table-usina-title">—</span>
+      <span id="table-periodo-badge" class="badge ok">—</span>
+    </div>
+    <div style="overflow-x:auto;">
+      <table id="rec-table">
+        <thead>
+          <tr>
+            <th>Instalação</th>
+            <th>Consorciado</th>
+            <th>Cota</th>
+            <th>Consumo (kWh)</th>
+            <th>Compensação (kWh)</th>
+            <th>Recebimento (kWh)</th>
+            <th>Saldo Atual</th>
+          </tr>
+        </thead>
+        <tbody id="rec-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>
+    <p>Fonte: Consulta Saldo GD — CEMIG · Atualizado: Abr/2026</p>
+    <p>Dashboard Rateio · Fonte Limpa Energia</p>
+  </footer>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="saldo-modal" onclick="if(event.target===this) closeModal()">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-title">Detalhamento de Saldo</div>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <table class="modal-table">
+          <thead>
+            <tr>
+              <th id="modal-col1">Nome</th>
+              <th style="text-align:right">Saldo (kWh)</th>
+            </tr>
+          </thead>
+          <tbody id="modal-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ===================== DADOS =====================
+const NOMES = {"3003122216":"CONSORCIO UFV SOLARDONORTE","3000287185":"GLOBO EIRELI","3000889842":"EDIFÍCIO RESIDENCIAL VERMONT","3014796929":"CASA CORAÇÃO DE JEUS RUA E SÃO RAFAEL","3013368708":"APARTAMENTO MOC","3000882584":"APARTAMENTO BH","3014270252":"CONSORCIO UFV SANTA DA PEDRA","3010610056":"COMERCIAL CERRADO LTDA","3014120738":"CONSORCIO UFV SANTA CLARA","3007049761":"CONDOMÍNIO EDIFÍCIO MAURA VALADARES","3001776932":"Condomínio Edifício São João de Deus","3003773148":"COND AMAZONAS","3003122189":"CONSORCIO SANTA CLARA (SALITRE)","3014533817":"CONSORCIO UFV FB","3001777063":"CONDOMÍNIO EDIFÍCIO ROZEN","3005608159":"CONDOMÍNIO EDIFÍCIO NIRVANA","3000168113":"EXPRESSA GULA RESTAURANTE","3014400008":"CONSORCIO UFV FONTE LIMPA (ULYANA)","3007676365":"Condominio VILLAGGIO DEL VENETO","3014165998":"GERSON SOUZA SILVA","3000946573":"GERSON SOUZA SILVA","3002083978":"PEDRA DE GELO","3004548113":"COND. OLIMPO","3002770642":"CONSORCIO UFV FONTE LIMPA II","3014316328":"SNEF BRASIL","3014316329":"SNEF BRASIL","3004843618":"COMERCIAL CERRADO LTDA","3010563962":"VALENTIM ENERGIA E ENGENHARIA LTDA","3011912680":"SNEF BRASIL","3002020710":"UC 3002020710","3001777001":"Labo Cito Exames Citológicos LTDA"};
+
+const DATA = {"usinas":["GLOBO EIRELI","UFV FB","UFV FONTE LIMPA I (ULYANA)","UFV FONTE LIMPA II (NOVA SERRANA)","UFV INHA\u00daMA","UFV SANTA CLARA","UFV SANTA DA PEDRA (JULIANO)","UFV SOLAR DO NORTE"],"periodos_all":["08/2025","09/2025","10/2025","11/2025","12/2025","01/2026","02/2026","03/2026","04/2026","05/2026","06/2026","07/2026","08/2026"],"dashboard_data":{"GLOBO EIRELI":{"periodos":["08/2025","09/2025","10/2025","11/2025","12/2025","01/2026","02/2026","03/2026","04/2026","05/2026","06/2026","07/2026","08/2026"],"geracao":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"recebimento":[22890.5,24881.9,18907.2,22355.6,18037.0,19386.4,19135.4,18947.57,18626.43,24523.1,32594.45,39217.12,23844.4],"saldo_geradora":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"rec_periodos":["08/2025","09/2025","10/2025","11/2025","12/2025","01/2026","02/2026","03/2026","04/2026","05/2026","06/2026","07/2026","08/2026"],"ultimo_periodo":"08/2026","recebedoras_historico":{"08/2025":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":20240.0,"Compensacao":20140.0,"Recebimento":13260.0,"SaldoAtual":9615.75,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SANTA DA PEDRA (JULIANO)"},{"UC":"256.152.018-51 / 3000287185","Quota_pct":85.0,"Consumo":20240.0,"Compensacao":20140.0,"Recebimento":9630.5,"SaldoAtual":9615.75,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SOLAR DO NORTE"}],"09/2025":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":23280.0,"Compensacao":23180.0,"Recebimento":14500.0,"SaldoAtual":13901.65,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SANTA DA PEDRA (JULIANO)"},{"UC":"256.152.018-51 / 3000287185","Quota_pct":85.0,"Consumo":23280.0,"Compensacao":23180.0,"Recebimento":10381.9,"SaldoAtual":13901.65,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SOLAR DO NORTE"}],"10/2025":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":22400.0,"Compensacao":22300.0,"Recebimento":12540.0,"SaldoAtual":13180.85,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SANTA DA PEDRA (JULIANO)"},{"UC":"256.152.018-51 / 3000287185","Quota_pct":60.0,"Consumo":22400.0,"Compensacao":22300.0,"Recebimento":6367.2,"SaldoAtual":13180.85,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SOLAR DO NORTE"}],"11/2025":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":21240.0,"Compensacao":21140.0,"Recebimento":14300.0,"SaldoAtual":17340.45,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SANTA DA PEDRA (JULIANO)"},{"UC":"256.152.018-51 / 3000287185","Quota_pct":60.0,"Consumo":21240.0,"Compensacao":21140.0,"Recebimento":8055.6,"SaldoAtual":17340.45,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SOLAR DO NORTE"}],"12/2025":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":25080.0,"Compensacao":24980.0,"Recebimento":11620.0,"SaldoAtual":12517.45,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SANTA DA PEDRA (JULIANO)"},{"UC":"256.152.018-51 / 3000287185","Quota_pct":60.0,"Consumo":25080.0,"Compensacao":24980.0,"Recebimento":6417.0,"SaldoAtual":12517.45,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SOLAR DO NORTE"}],"01/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":26160.0,"Compensacao":26060.0,"Recebimento":12340.0,"SaldoAtual":7595.85,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SANTA DA PEDRA (JULIANO)"},{"UC":"256.152.018-51 / 3000287185","Quota_pct":60.0,"Consumo":26160.0,"Compensacao":26060.0,"Recebimento":7046.4,"SaldoAtual":7595.85,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SOLAR DO NORTE"}],"02/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":24640.0,"Compensacao":24540.0,"Recebimento":12140.0,"SaldoAtual":5135.25,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SANTA DA PEDRA (JULIANO)"},{"UC":"256.152.018-51 / 3000287185","Quota_pct":60.0,"Consumo":24640.0,"Compensacao":24540.0,"Recebimento":6995.4,"SaldoAtual":5135.25,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SOLAR DO NORTE"}],"03/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":26600.0,"Compensacao":26342.82,"Recebimento":9420.0,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SANTA DA PEDRA (JULIANO)"},{"UC":"256.152.018-51 / 3000287185","Quota_pct":83.0,"Consumo":26600.0,"Compensacao":26342.82,"Recebimento":9527.57,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SOLAR DO NORTE"}],"04/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":24480.0,"Compensacao":19922.43,"Recebimento":10060.0,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SANTA DA PEDRA (JULIANO)"},{"UC":"256.152.018-51 / 3000287185","Quota_pct":83.0,"Consumo":24480.0,"Compensacao":19922.43,"Recebimento":8566.43,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SOLAR DO NORTE"}],"05/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":55.0,"Consumo":25360.0,"Compensacao":23803.85,"Recebimento":1166.0,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV FONTE LIMPA II (NOVA SERRANA)"},{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":25920.0,"Compensacao":25365.1,"Recebimento":12260.0,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SANTA DA PEDRA (JULIANO)"},{"UC":"256.152.018-51 / 3000287185","Quota_pct":83.0,"Consumo":25920.0,"Compensacao":25365.1,"Recebimento":11097.1,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SOLAR DO NORTE"}],"06/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":79.0,"Consumo":22320.0,"Compensacao":22320.0,"Recebimento":6746.6,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV FONTE LIMPA I (ULYANA)"},{"UC":"256.152.018-51 / 3000287185","Quota_pct":55.0,"Consumo":22320.0,"Compensacao":22320.0,"Recebimento":5170.0,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV FONTE LIMPA II (NOVA SERRANA)"},{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":25360.0,"Compensacao":23803.85,"Recebimento":11220.0,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SANTA DA PEDRA (JULIANO)"},{"UC":"256.152.018-51 / 3000287185","Quota_pct":83.0,"Consumo":25360.0,"Compensacao":23803.85,"Recebimento":9457.85,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SOLAR DO NORTE"}],"07/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":79.0,"Consumo":24280.0,"Compensacao":24280.0,"Recebimento":9622.2,"SaldoAtual":15429.5,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV FONTE LIMPA I (ULYANA)"},{"UC":"256.152.018-51 / 3000287185","Quota_pct":55.0,"Consumo":24280.0,"Compensacao":24280.0,"Recebimento":6274.02,"SaldoAtual":15429.5,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV FONTE LIMPA II (NOVA SERRANA)"},{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":22320.0,"Compensacao":22320.0,"Recebimento":12340.0,"SaldoAtual":15429.5,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SANTA DA PEDRA (JULIANO)"},{"UC":"256.152.018-51 / 3000287185","Quota_pct":90.0,"Consumo":22320.0,"Compensacao":22320.0,"Recebimento":10980.9,"SaldoAtual":15429.5,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SOLAR DO NORTE"}],"08/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":79.0,"Consumo":0.0,"Compensacao":0.0,"Recebimento":0.0,"SaldoAtual":33634.125,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV FONTE LIMPA I (ULYANA)"},{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":24280.0,"Compensacao":24280.0,"Recebimento":12580.0,"SaldoAtual":33634.125,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SANTA DA PEDRA (JULIANO)"},{"UC":"256.152.018-51 / 3000287185","Quota_pct":90.0,"Consumo":24280.0,"Compensacao":24280.0,"Recebimento":11264.4,"SaldoAtual":33634.125,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":"UFV SOLAR DO NORTE"}]}},"UFV FB":{"periodos":["08/2025","09/2025","10/2025","11/2025","12/2025","01/2026","02/2026","03/2026","04/2026","05/2026","06/2026","07/2026","08/2026"],"geracao":[10920.0,12960.0,12600.0,12360.0,8760.0,10200.0,11280.0,10400.0,8280.0,13240.0,10720.0,11320.0,11800.0],"recebimento":[10900.0,12940.0,12600.0,12340.0,8740.0,10180.0,11280.0,10380.0,8260.0,13220.0,10700.0,11300.0,11800.0],"saldo_geradora":[15072.0,15072.0,15072.0,15072.0,15072.0,15072.0,15072.0,15072.0,15072.0,15072.0,15072.0,15072.0,15072.0],"rec_periodos":["08/2025","09/2025","10/2025","11/2025","12/2025","01/2026","02/2026","03/2026","04/2026","05/2026","06/2026","07/2026","08/2026"],"ultimo_periodo":"08/2026","recebedoras_historico":{"08/2025":[{"UC":"148.777.018-32 / 3000168113","Quota_pct":30.0,"Consumo":3779.0,"Compensacao":3679.0,"Recebimento":3270.0,"SaldoAtual":13295.468,"UC_short":"3000168113","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":22.0,"Consumo":2800.0,"Compensacao":2700.0,"Recebimento":2398.0,"SaldoAtual":1198.184,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"5.112.094.018-50 / 3005608159","Quota_pct":23.0,"Consumo":3000.0,"Compensacao":2900.0,"Recebimento":2507.0,"SaldoAtual":6272.5,"UC_short":"3005608159","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.597.078.018-43 / 3001777063","Quota_pct":25.0,"Consumo":2851.0,"Compensacao":2751.0,"Recebimento":2725.0,"SaldoAtual":8017.586,"UC_short":"3001777063","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"09/2025":[{"UC":"148.777.018-32 / 3000168113","Quota_pct":30.0,"Consumo":3409.0,"Compensacao":3309.0,"Recebimento":3882.0,"SaldoAtual":12886.468,"UC_short":"3000168113","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":22.0,"Consumo":3080.0,"Compensacao":2980.0,"Recebimento":2846.8,"SaldoAtual":1066.268,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"5.112.094.018-50 / 3005608159","Quota_pct":23.0,"Consumo":4760.0,"Compensacao":4660.0,"Recebimento":2976.2,"SaldoAtual":4588.7,"UC_short":"3005608159","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.597.078.018-43 / 3001777063","Quota_pct":25.0,"Consumo":2784.0,"Compensacao":2684.0,"Recebimento":3235.0,"SaldoAtual":8568.586,"UC_short":"3001777063","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"10/2025":[{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":22.0,"Consumo":3240.0,"Compensacao":3140.0,"Recebimento":2772.0,"SaldoAtual":699.455,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"5.112.094.018-50 / 3005608159","Quota_pct":23.0,"Consumo":4880.0,"Compensacao":4780.0,"Recebimento":2898.0,"SaldoAtual":2706.7,"UC_short":"3005608159","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.597.078.018-43 / 3001777063","Quota_pct":25.0,"Consumo":2613.0,"Compensacao":2513.0,"Recebimento":3150.0,"SaldoAtual":9205.586,"UC_short":"3001777063","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"148.777.018-32 / 3000168113","Quota_pct":30.0,"Consumo":3301.0,"Compensacao":3201.0,"Recebimento":3780.0,"SaldoAtual":13459.468,"UC_short":"3000168113","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"11/2025":[{"UC":"5.112.094.018-50 / 3005608159","Quota_pct":45.0,"Consumo":4480.0,"Compensacao":4380.0,"Recebimento":5553.0,"SaldoAtual":3879.7,"UC_short":"3005608159","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.597.078.018-43 / 3001777063","Quota_pct":25.0,"Consumo":2231.0,"Compensacao":2131.0,"Recebimento":3085.0,"SaldoAtual":10159.586,"UC_short":"3001777063","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"148.777.018-32 / 3000168113","Quota_pct":30.0,"Consumo":4048.0,"Compensacao":3948.0,"Recebimento":3702.0,"SaldoAtual":14038.468,"UC_short":"3000168113","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"12/2025":[{"UC":"1.597.078.018-43 / 3001777063","Quota_pct":25.0,"Consumo":2627.0,"Compensacao":2527.0,"Recebimento":2185.0,"SaldoAtual":9817.586,"UC_short":"3001777063","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"148.777.018-32 / 3000168113","Quota_pct":30.0,"Consumo":3708.0,"Compensacao":3608.0,"Recebimento":2622.0,"SaldoAtual":13792.468,"UC_short":"3000168113","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"5.112.094.018-50 / 3005608159","Quota_pct":45.0,"Consumo":4680.0,"Compensacao":4580.0,"Recebimento":3933.0,"SaldoAtual":3232.7,"UC_short":"3005608159","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"01/2026":[{"UC":"1.597.078.018-43 / 3001777063","Quota_pct":25.0,"Consumo":2287.0,"Compensacao":2187.0,"Recebimento":2545.0,"SaldoAtual":10175.586,"UC_short":"3001777063","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"148.777.018-32 / 3000168113","Quota_pct":30.0,"Consumo":3439.0,"Compensacao":3339.0,"Recebimento":3054.0,"SaldoAtual":12806.468,"UC_short":"3000168113","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"5.112.094.018-50 / 3005608159","Quota_pct":45.0,"Consumo":3000.0,"Compensacao":2900.0,"Recebimento":4581.0,"SaldoAtual":4913.7,"UC_short":"3005608159","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"02/2026":[{"UC":"5.112.094.018-50 / 3005608159","Quota_pct":45.0,"Consumo":3640.0,"Compensacao":3540.0,"Recebimento":5076.0,"SaldoAtual":6449.7,"UC_short":"3005608159","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.597.078.018-43 / 3001777063","Quota_pct":25.0,"Consumo":2342.0,"Compensacao":2242.0,"Recebimento":2820.0,"SaldoAtual":10753.586,"UC_short":"3001777063","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"148.777.018-32 / 3000168113","Quota_pct":30.0,"Consumo":3889.0,"Compensacao":3789.0,"Recebimento":3384.0,"SaldoAtual":12521.468,"UC_short":"3000168113","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"03/2026":[{"UC":"148.777.018-32 / 3000168113","Quota_pct":30.0,"Consumo":3605.0,"Compensacao":3505.0,"Recebimento":3114.0,"SaldoAtual":12116.468,"UC_short":"3000168113","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.597.078.018-43 / 3001777063","Quota_pct":25.0,"Consumo":2473.0,"Compensacao":2373.0,"Recebimento":2595.0,"SaldoAtual":10975.586,"UC_short":"3001777063","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"5.112.094.018-50 / 3005608159","Quota_pct":45.0,"Consumo":3360.0,"Compensacao":3260.0,"Recebimento":4671.0,"SaldoAtual":7860.7,"UC_short":"3005608159","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"04/2026":[{"UC":"148.777.018-32 / 3000168113","Quota_pct":30.0,"Consumo":4223.0,"Compensacao":4123.0,"Recebimento":2478.0,"SaldoAtual":11725.468,"UC_short":"3000168113","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"5.112.094.018-50 / 3005608159","Quota_pct":45.0,"Consumo":4000.0,"Compensacao":3900.0,"Recebimento":3717.0,"SaldoAtual":7677.7,"UC_short":"3005608159","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.597.078.018-43 / 3001777063","Quota_pct":25.0,"Consumo":2477.0,"Compensacao":2377.0,"Recebimento":2065.0,"SaldoAtual":10663.586,"UC_short":"3001777063","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"05/2026":[{"UC":"148.777.018-32 / 3000168113","Quota_pct":30.0,"Consumo":4008.0,"Compensacao":3908.0,"Recebimento":3966.0,"SaldoAtual":10080.468,"UC_short":"3000168113","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"2.623.296.018-19 / 3002908184","Quota_pct":0.0,"Consumo":1400.0,"Compensacao":1400.0,"Recebimento":0.0,"SaldoAtual":4330.628,"UC_short":"3002908184","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"2.623.296.018-19 / 3002908184","Quota_pct":0.0,"Consumo":700.0,"Compensacao":700.0,"Recebimento":0.0,"SaldoAtual":91.189,"UC_short":"3002908184","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"5.112.094.018-50 / 3005608159","Quota_pct":25.0,"Consumo":4320.0,"Compensacao":4220.0,"Recebimento":3305.0,"SaldoAtual":6762.7,"UC_short":"3005608159","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.597.016.018-71 / 3001777001","Quota_pct":30.0,"Consumo":1436.0,"Compensacao":1406.0,"Recebimento":3966.0,"SaldoAtual":2560.0,"UC_short":"3001777001","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.597.078.018-43 / 3001777063","Quota_pct":15.0,"Consumo":2943.0,"Compensacao":2843.0,"Recebimento":1983.0,"SaldoAtual":9803.586,"UC_short":"3001777063","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"06/2026":[{"UC":"1.597.016.018-71 / 3001777001","Quota_pct":30.0,"Consumo":1167.0,"Compensacao":1137.0,"Recebimento":3210.0,"SaldoAtual":4633.0,"UC_short":"3001777001","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"148.777.018-32 / 3000168113","Quota_pct":30.0,"Consumo":4128.0,"Compensacao":4028.0,"Recebimento":3210.0,"SaldoAtual":10138.468,"UC_short":"3000168113","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.597.078.018-43 / 3001777063","Quota_pct":15.0,"Consumo":2560.0,"Compensacao":2460.0,"Recebimento":1605.0,"SaldoAtual":8948.586,"UC_short":"3001777063","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"2.623.296.018-19 / 3002908184","Quota_pct":0.0,"Consumo":0.0,"Compensacao":0.0,"Recebimento":0.0,"SaldoAtual":91.189,"UC_short":"3002908184","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"2.623.296.018-19 / 3002908184","Quota_pct":0.0,"Consumo":2100.0,"Compensacao":2100.0,"Recebimento":0.0,"SaldoAtual":4429.963,"UC_short":"3002908184","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"5.112.094.018-50 / 3005608159","Quota_pct":25.0,"Consumo":5040.0,"Compensacao":4940.0,"Recebimento":2675.0,"SaldoAtual":4497.7,"UC_short":"3005608159","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"07/2026":[{"UC":"1.597.016.018-71 / 3001777001","Quota_pct":30.0,"Consumo":1127.0,"Compensacao":1097.0,"Recebimento":3390.0,"SaldoAtual":6926.0,"UC_short":"3001777001","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"2.623.296.018-19 / 3002908184","Quota_pct":0.0,"Consumo":700.0,"Compensacao":700.0,"Recebimento":0.0,"SaldoAtual":91.189,"UC_short":"3002908184","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"2.623.296.018-19 / 3002908184","Quota_pct":0.0,"Consumo":2100.0,"Compensacao":2100.0,"Recebimento":0.0,"SaldoAtual":4525.584,"UC_short":"3002908184","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"148.777.018-32 / 3000168113","Quota_pct":30.0,"Consumo":3792.0,"Compensacao":3692.0,"Recebimento":3390.0,"SaldoAtual":9320.468,"UC_short":"3000168113","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.597.078.018-43 / 3001777063","Quota_pct":15.0,"Consumo":2915.0,"Compensacao":2815.0,"Recebimento":1695.0,"SaldoAtual":7828.586,"UC_short":"3001777063","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"5.112.094.018-50 / 3005608159","Quota_pct":25.0,"Consumo":5520.0,"Compensacao":5420.0,"Recebimento":2825.0,"SaldoAtual":1902.7,"UC_short":"3005608159","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"08/2026":[{"UC":"148.777.018-32 / 3000168113","Quota_pct":30.0,"Consumo":0.0,"Compensacao":0.0,"Recebimento":3540.0,"SaldoAtual":9018.468,"UC_short":"3000168113","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"5.112.094.018-50 / 3005608159","Quota_pct":44.0,"Consumo":0.0,"Compensacao":0.0,"Recebimento":5192.0,"SaldoAtual":0.0,"UC_short":"3005608159","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.597.078.018-43 / 3001777063","Quota_pct":25.0,"Consumo":2636.0,"Compensacao":2536.0,"Recebimento":2950.0,"SaldoAtual":8242.586,"UC_short":"3001777063","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.597.016.018-71 / 3001777001","Quota_pct":1.0,"Consumo":0.0,"Compensacao":0.0,"Recebimento":118.0,"SaldoAtual":0.0,"UC_short":"3001777001","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}]}},"UFV FONTE LIMPA I (ULYANA)":{"periodos":["08/2025","09/2025","10/2025","11/2025","12/2025","01/2026","02/2026","03/2026","04/2026","05/2026","06/2026","07/2026"],"geracao":[8760.0,15760.0,15200.0,10000.0,10360.0,13280.0,8200.0,10760.0,10080.0,8600.0,8560.0,12200.0],"recebimento":[8760.0,15740.0,15180.0,9980.0,10360.0,13260.0,8200.0,10740.0,10060.0,8600.0,8540.0,12180.0],"saldo_geradora":[7470.0,7470.0,7470.0,7470.0,7470.0,7470.0,7470.0,7470.0,7470.0,7470.0,7470.0,7470.0],"rec_periodos":["08/2025","09/2025","10/2025","11/2025","12/2025","01/2026","02/2026","03/2026","04/2026","05/2026","06/2026","07/2026"],"ultimo_periodo":"07/2026","recebedoras_historico":{"08/2025":[{"UC":"1.874.509.018-63 / 3002083978","Quota_pct":0.01,"Consumo":12720.0,"Compensacao":12720.0,"Recebimento":0.88,"SaldoAtual":24834.175,"UC_short":"3002083978","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.180.193.018-76 / 3014165998","Quota_pct":0.01,"Consumo":3826.0,"Compensacao":3726.0,"Recebimento":0.88,"SaldoAtual":12020.21,"UC_short":"3014165998","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"846.322.018-75 / 3000946573","Quota_pct":0.01,"Consumo":475.0,"Compensacao":375.0,"Recebimento":0.88,"SaldoAtual":2672.17,"UC_short":"3000946573","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":99.97,"Consumo":10520.0,"Compensacao":8757.37,"Recebimento":8757.37,"SaldoAtual":0.0,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"09/2025":[{"UC":"11.180.193.018-76 / 3014165998","Quota_pct":0.01,"Consumo":3371.0,"Compensacao":3271.0,"Recebimento":1.57,"SaldoAtual":12631.086,"UC_short":"3014165998","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"846.322.018-75 / 3000946573","Quota_pct":0.01,"Consumo":421.0,"Compensacao":321.0,"Recebimento":1.57,"SaldoAtual":3436.744,"UC_short":"3000946573","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":99.97,"Consumo":10000.0,"Compensacao":9900.0,"Recebimento":15735.28,"SaldoAtual":5835.278,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.874.509.018-63 / 3002083978","Quota_pct":0.01,"Consumo":13800.0,"Compensacao":13800.0,"Recebimento":1.57,"SaldoAtual":32728.601,"UC_short":"3002083978","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"10/2025":[{"UC":"11.180.193.018-76 / 3014165998","Quota_pct":0.01,"Consumo":3301.0,"Compensacao":3201.0,"Recebimento":1.52,"SaldoAtual":9362.856,"UC_short":"3014165998","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"846.322.018-75 / 3000946573","Quota_pct":0.01,"Consumo":428.0,"Compensacao":328.0,"Recebimento":1.52,"SaldoAtual":3111.458,"UC_short":"3000946573","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":99.97,"Consumo":9960.0,"Compensacao":9860.0,"Recebimento":15175.45,"SaldoAtual":11150.724,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.874.509.018-63 / 3002083978","Quota_pct":0.01,"Consumo":14920.0,"Compensacao":14820.0,"Recebimento":1.52,"SaldoAtual":29611.315,"UC_short":"3002083978","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"11/2025":[{"UC":"11.180.193.018-76 / 3014165998","Quota_pct":0.01,"Consumo":3933.0,"Compensacao":3833.0,"Recebimento":1.0,"SaldoAtual":6164.402,"UC_short":"3014165998","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.874.509.018-63 / 3002083978","Quota_pct":0.01,"Consumo":13480.0,"Compensacao":13380.0,"Recebimento":1.0,"SaldoAtual":28133.341,"UC_short":"3002083978","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"846.322.018-75 / 3000946573","Quota_pct":0.01,"Consumo":344.0,"Compensacao":244.0,"Recebimento":1.0,"SaldoAtual":2869.484,"UC_short":"3000946573","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":99.97,"Consumo":8240.0,"Compensacao":8140.0,"Recebimento":9977.01,"SaldoAtual":12987.73,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"12/2025":[{"UC":"11.180.193.018-76 / 3014165998","Quota_pct":0.01,"Consumo":4220.0,"Compensacao":2334.56,"Recebimento":1.04,"SaldoAtual":2333.348,"UC_short":"3014165998","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"846.322.018-75 / 3000946573","Quota_pct":0.01,"Consumo":360.0,"Compensacao":260.0,"Recebimento":1.04,"SaldoAtual":2611.468,"UC_short":"3000946573","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.874.509.018-63 / 3002083978","Quota_pct":0.01,"Consumo":16760.0,"Compensacao":16660.0,"Recebimento":1.04,"SaldoAtual":22575.325,"UC_short":"3002083978","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":99.97,"Consumo":7880.0,"Compensacao":7780.0,"Recebimento":10356.89,"SaldoAtual":17284.106,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"01/2026":[{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":99.97,"Consumo":7600.0,"Compensacao":7500.0,"Recebimento":13256.02,"SaldoAtual":28518.484,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"846.322.018-75 / 3000946573","Quota_pct":0.01,"Consumo":589.0,"Compensacao":489.0,"Recebimento":1.33,"SaldoAtual":2123.966,"UC_short":"3000946573","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.874.509.018-63 / 3002083978","Quota_pct":0.01,"Consumo":19680.0,"Compensacao":19580.0,"Recebimento":1.33,"SaldoAtual":12016.823,"UC_short":"3002083978","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.180.193.018-76 / 3014165998","Quota_pct":0.01,"Consumo":1718.0,"Compensacao":0.78,"Recebimento":1.33,"SaldoAtual":0.0,"UC_short":"3014165998","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"02/2026":[{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":80.0,"Consumo":7240.0,"Compensacao":7140.0,"Recebimento":6560.0,"SaldoAtual":35776.132,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"4.110.034.018-00 / 3004548113","Quota_pct":20.0,"Consumo":1247.0,"Compensacao":1147.0,"Recebimento":1640.0,"SaldoAtual":0.0,"UC_short":"3004548113","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"03/2026":[{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":80.0,"Consumo":7600.0,"Compensacao":7500.0,"Recebimento":8592.0,"SaldoAtual":36868.532,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"4.110.034.018-00 / 3004548113","Quota_pct":20.0,"Consumo":1184.0,"Compensacao":1084.0,"Recebimento":2148.0,"SaldoAtual":493.0,"UC_short":"3004548113","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"04/2026":[{"UC":"4.110.034.018-00 / 3004548113","Quota_pct":20.0,"Consumo":1230.0,"Compensacao":1130.0,"Recebimento":2012.0,"SaldoAtual":1557.0,"UC_short":"3004548113","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":80.0,"Consumo":7440.0,"Compensacao":7340.0,"Recebimento":8048.0,"SaldoAtual":37577.044,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"05/2026":[{"UC":"4.110.034.018-00 / 3004548113","Quota_pct":20.0,"Consumo":1294.0,"Compensacao":1194.0,"Recebimento":1720.0,"SaldoAtual":2439.0,"UC_short":"3004548113","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":80.0,"Consumo":7920.0,"Compensacao":7820.0,"Recebimento":6880.0,"SaldoAtual":36637.468,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"06/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":79.0,"Consumo":22320.0,"Compensacao":22320.0,"Recebimento":6746.6,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"4.110.034.018-00 / 3004548113","Quota_pct":20.0,"Consumo":1149.0,"Compensacao":1049.0,"Recebimento":1708.0,"SaldoAtual":2965.0,"UC_short":"3004548113","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":1.0,"Consumo":9680.0,"Compensacao":9580.0,"Recebimento":85.4,"SaldoAtual":27143.628,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"07/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":79.0,"Consumo":24280.0,"Compensacao":24280.0,"Recebimento":9622.2,"SaldoAtual":15429.5,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"4.110.034.018-00 / 3004548113","Quota_pct":20.0,"Consumo":1406.0,"Compensacao":1306.0,"Recebimento":2436.0,"SaldoAtual":3624.0,"UC_short":"3004548113","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":1.0,"Consumo":6800.0,"Compensacao":6700.0,"Recebimento":121.8,"SaldoAtual":20566.398,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}]}},"UFV FONTE LIMPA II (NOVA SERRANA)":{"periodos":["08/2025","09/2025","10/2025","11/2025","12/2025","01/2026","02/2026","03/2026","04/2026","05/2026","06/2026","07/2026"],"geracao":[13560.0,14520.0,12560.0,11800.0,12960.0,14400.0,11800.0,13040.0,13080.0,2120.0,9400.0,11480.0],"recebimento":[13491.41,14497.18,12537.1,11777.06,12937.0,14376.17,11800.0,13015.62,13080.0,2120.0,9400.0,11407.32],"saldo_geradora":[35918.0,35918.0,35918.0,35918.0,37211.7,38649.32,38649.32,38649.32,38649.32,38649.32,38649.32,38649.32],"rec_periodos":["08/2025","09/2025","10/2025","11/2025","12/2025","01/2026","02/2026","03/2026","04/2026","05/2026","06/2026","07/2026"],"ultimo_periodo":"07/2026","recebedoras_historico":{"08/2025":[{"UC":"1.874.509.018-63 / 3002083978","Quota_pct":25.0,"Consumo":13800.0,"Compensacao":13800.0,"Recebimento":3372.85,"SaldoAtual":24834.175,"UC_short":"3002083978","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"8.934.099.018-18 / 3011912680","Quota_pct":10.0,"Consumo":1600.0,"Compensacao":1349.14,"Recebimento":1349.14,"SaldoAtual":0.0,"UC_short":"3011912680","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.635.083.018-82 / 3010610056","Quota_pct":20.0,"Consumo":2123.0,"Compensacao":2123.0,"Recebimento":2698.28,"SaldoAtual":1233.177,"UC_short":"3010610056","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"4.387.947.018-21 / 3004843618","Quota_pct":3.0,"Consumo":482.0,"Compensacao":482.0,"Recebimento":404.74,"SaldoAtual":2420.377,"UC_short":"3004843618","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.589.199.018-60 / 3010563962","Quota_pct":4.0,"Consumo":304.0,"Compensacao":232.77,"Recebimento":539.66,"SaldoAtual":3158.971,"UC_short":"3010563962","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.147.018-69 / 3014316329","Quota_pct":5.0,"Consumo":760.0,"Compensacao":753.91,"Recebimento":674.57,"SaldoAtual":3438.205,"UC_short":"3014316329","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.146.018-73 / 3014316328","Quota_pct":33.0,"Consumo":4440.0,"Compensacao":4440.0,"Recebimento":4452.16,"SaldoAtual":3187.006,"UC_short":"3014316328","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"09/2025":[{"UC":"7.589.199.018-60 / 3010563962","Quota_pct":4.0,"Consumo":280.0,"Compensacao":205.35,"Recebimento":579.89,"SaldoAtual":3533.505,"UC_short":"3010563962","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"8.934.099.018-18 / 3011912680","Quota_pct":10.0,"Consumo":1720.0,"Compensacao":1449.72,"Recebimento":1449.72,"SaldoAtual":0.0,"UC_short":"3011912680","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"4.387.947.018-21 / 3004843618","Quota_pct":3.0,"Consumo":481.0,"Compensacao":481.0,"Recebimento":434.92,"SaldoAtual":2343.119,"UC_short":"3004843618","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.146.018-73 / 3014316328","Quota_pct":58.0,"Consumo":4320.0,"Compensacao":4320.0,"Recebimento":8408.37,"SaldoAtual":7275.372,"UC_short":"3014316328","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.635.083.018-82 / 3010610056","Quota_pct":20.0,"Consumo":2309.0,"Compensacao":2309.0,"Recebimento":2899.44,"SaldoAtual":1808.458,"UC_short":"3010610056","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.147.018-69 / 3014316329","Quota_pct":5.0,"Consumo":920.0,"Compensacao":920.0,"Recebimento":724.86,"SaldoAtual":3243.064,"UC_short":"3014316329","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"10/2025":[{"UC":"7.589.199.018-60 / 3010563962","Quota_pct":4.0,"Consumo":262.0,"Compensacao":185.81,"Recebimento":501.48,"SaldoAtual":3849.181,"UC_short":"3010563962","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.635.083.018-82 / 3010610056","Quota_pct":20.0,"Consumo":2194.0,"Compensacao":2194.0,"Recebimento":2507.42,"SaldoAtual":2398.895,"UC_short":"3010610056","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.147.018-69 / 3014316329","Quota_pct":5.0,"Consumo":880.0,"Compensacao":880.0,"Recebimento":626.86,"SaldoAtual":2989.919,"UC_short":"3014316329","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"8.934.099.018-18 / 3011912680","Quota_pct":10.0,"Consumo":1560.0,"Compensacao":1253.71,"Recebimento":1253.71,"SaldoAtual":0.0,"UC_short":"3011912680","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"4.387.947.018-21 / 3004843618","Quota_pct":3.0,"Consumo":415.0,"Compensacao":415.0,"Recebimento":376.11,"SaldoAtual":2297.034,"UC_short":"3004843618","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.146.018-73 / 3014316328","Quota_pct":58.0,"Consumo":4200.0,"Compensacao":4200.0,"Recebimento":7271.52,"SaldoAtual":10346.893,"UC_short":"3014316328","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"11/2025":[{"UC":"11.329.146.018-73 / 3014316328","Quota_pct":58.0,"Consumo":4360.0,"Compensacao":4360.0,"Recebimento":6830.7,"SaldoAtual":12817.588,"UC_short":"3014316328","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.147.018-69 / 3014316329","Quota_pct":5.0,"Consumo":1520.0,"Compensacao":1520.0,"Recebimento":588.85,"SaldoAtual":2058.772,"UC_short":"3014316329","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.635.083.018-82 / 3010610056","Quota_pct":20.0,"Consumo":2668.0,"Compensacao":2668.0,"Recebimento":2355.41,"SaldoAtual":2712.316,"UC_short":"3010610056","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"8.934.099.018-18 / 3011912680","Quota_pct":10.0,"Consumo":480.0,"Compensacao":435.85,"Recebimento":1177.71,"SaldoAtual":741.86,"UC_short":"3011912680","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.589.199.018-60 / 3010563962","Quota_pct":4.0,"Consumo":327.0,"Compensacao":260.36,"Recebimento":471.08,"SaldoAtual":4059.903,"UC_short":"3010563962","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"4.387.947.018-21 / 3004843618","Quota_pct":3.0,"Consumo":465.0,"Compensacao":465.0,"Recebimento":353.31,"SaldoAtual":2258.147,"UC_short":"3004843618","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"12/2025":[{"UC":"4.387.947.018-21 / 3004843618","Quota_pct":3.0,"Consumo":501.0,"Compensacao":501.0,"Recebimento":388.11,"SaldoAtual":2146.459,"UC_short":"3004843618","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.635.083.018-82 / 3010610056","Quota_pct":20.0,"Consumo":2489.0,"Compensacao":2489.0,"Recebimento":2587.4,"SaldoAtual":2399.728,"UC_short":"3010610056","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.146.018-73 / 3014316328","Quota_pct":58.0,"Consumo":4480.0,"Compensacao":4480.0,"Recebimento":7503.46,"SaldoAtual":15841.049,"UC_short":"3014316328","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.147.018-69 / 3014316329","Quota_pct":5.0,"Consumo":1440.0,"Compensacao":1440.0,"Recebimento":646.85,"SaldoAtual":1265.622,"UC_short":"3014316329","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.589.199.018-60 / 3010563962","Quota_pct":4.0,"Consumo":350.0,"Compensacao":287.9,"Recebimento":517.48,"SaldoAtual":4289.479,"UC_short":"3010563962","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"01/2026":[{"UC":"7.589.199.018-60 / 3010563962","Quota_pct":4.0,"Consumo":248.0,"Compensacao":180.07,"Recebimento":575.05,"SaldoAtual":4684.452,"UC_short":"3010563962","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"4.387.947.018-21 / 3004843618","Quota_pct":3.0,"Consumo":431.0,"Compensacao":431.0,"Recebimento":431.29,"SaldoAtual":2033.569,"UC_short":"3004843618","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.147.018-69 / 3014316329","Quota_pct":5.0,"Consumo":1520.0,"Compensacao":1520.0,"Recebimento":718.81,"SaldoAtual":464.431,"UC_short":"3014316329","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.635.083.018-82 / 3010610056","Quota_pct":20.0,"Consumo":2094.0,"Compensacao":2094.0,"Recebimento":2875.23,"SaldoAtual":2498.128,"UC_short":"3010610056","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.146.018-73 / 3014316328","Quota_pct":58.0,"Consumo":4400.0,"Compensacao":4400.0,"Recebimento":8338.18,"SaldoAtual":19779.229,"UC_short":"3014316328","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"02/2026":[{"UC":"11.329.147.018-69 / 3014316329","Quota_pct":30.0,"Consumo":1360.0,"Compensacao":1360.0,"Recebimento":3540.0,"SaldoAtual":2644.431,"UC_short":"3014316329","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.635.083.018-82 / 3010610056","Quota_pct":20.0,"Consumo":2631.0,"Compensacao":2631.0,"Recebimento":2360.0,"SaldoAtual":3279.363,"UC_short":"3010610056","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.589.199.018-60 / 3010563962","Quota_pct":2.5,"Consumo":299.0,"Compensacao":242.61,"Recebimento":295.0,"SaldoAtual":4736.845,"UC_short":"3010563962","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.146.018-73 / 3014316328","Quota_pct":45.0,"Consumo":3960.0,"Compensacao":3960.0,"Recebimento":5310.0,"SaldoAtual":21129.229,"UC_short":"3014316328","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"4.387.947.018-21 / 3004843618","Quota_pct":2.5,"Consumo":430.0,"Compensacao":430.0,"Recebimento":295.0,"SaldoAtual":2033.854,"UC_short":"3004843618","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"03/2026":[{"UC":"4.387.947.018-21 / 3004843618","Quota_pct":2.5,"Consumo":395.0,"Compensacao":395.0,"Recebimento":325.39,"SaldoAtual":1898.854,"UC_short":"3004843618","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.147.018-69 / 3014316329","Quota_pct":30.0,"Consumo":1640.0,"Compensacao":1640.0,"Recebimento":3904.69,"SaldoAtual":4909.116,"UC_short":"3014316329","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.589.199.018-60 / 3010563962","Quota_pct":2.5,"Consumo":334.0,"Compensacao":285.28,"Recebimento":325.39,"SaldoAtual":4776.958,"UC_short":"3010563962","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.635.083.018-82 / 3010610056","Quota_pct":20.0,"Consumo":2106.0,"Compensacao":2106.0,"Recebimento":2603.12,"SaldoAtual":3008.363,"UC_short":"3010610056","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.146.018-73 / 3014316328","Quota_pct":45.0,"Consumo":4160.0,"Compensacao":4160.0,"Recebimento":5857.03,"SaldoAtual":22826.257,"UC_short":"3014316328","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"04/2026":[{"UC":"11.329.147.018-69 / 3014316329","Quota_pct":30.0,"Consumo":1560.0,"Compensacao":1560.0,"Recebimento":3924.0,"SaldoAtual":7273.116,"UC_short":"3014316329","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.589.199.018-60 / 3010563962","Quota_pct":2.5,"Consumo":317.0,"Compensacao":264.55,"Recebimento":327.0,"SaldoAtual":4839.407,"UC_short":"3010563962","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.146.018-73 / 3014316328","Quota_pct":45.0,"Consumo":4720.0,"Compensacao":4720.0,"Recebimento":5886.0,"SaldoAtual":23992.257,"UC_short":"3014316328","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"4.387.947.018-21 / 3004843618","Quota_pct":2.5,"Consumo":512.0,"Compensacao":512.0,"Recebimento":327.0,"SaldoAtual":1829.245,"UC_short":"3004843618","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.635.083.018-82 / 3010610056","Quota_pct":20.0,"Consumo":2382.0,"Compensacao":2382.0,"Recebimento":2616.0,"SaldoAtual":3505.486,"UC_short":"3010610056","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"05/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":55.0,"Consumo":25360.0,"Compensacao":23803.85,"Recebimento":1166.0,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.635.083.018-82 / 3010610056","Quota_pct":20.0,"Consumo":2233.0,"Compensacao":2233.0,"Recebimento":424.0,"SaldoAtual":3739.486,"UC_short":"3010610056","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.589.199.018-60 / 3010563962","Quota_pct":2.5,"Consumo":353.0,"Compensacao":306.98,"Recebimento":53.0,"SaldoAtual":4585.43,"UC_short":"3010563962","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.147.018-69 / 3014316329","Quota_pct":15.0,"Consumo":1480.0,"Compensacao":1480.0,"Recebimento":318.0,"SaldoAtual":6111.116,"UC_short":"3014316329","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.146.018-73 / 3014316328","Quota_pct":5.0,"Consumo":4360.0,"Compensacao":4360.0,"Recebimento":106.0,"SaldoAtual":19738.257,"UC_short":"3014316328","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"4.387.947.018-21 / 3004843618","Quota_pct":2.5,"Consumo":462.0,"Compensacao":462.0,"Recebimento":53.0,"SaldoAtual":1644.245,"UC_short":"3004843618","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"06/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":55.0,"Consumo":22320.0,"Compensacao":22320.0,"Recebimento":5170.0,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.635.083.018-82 / 3010610056","Quota_pct":20.0,"Consumo":2064.0,"Compensacao":2064.0,"Recebimento":1880.0,"SaldoAtual":1930.486,"UC_short":"3010610056","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.589.199.018-60 / 3010563962","Quota_pct":2.5,"Consumo":347.0,"Compensacao":299.21,"Recebimento":235.0,"SaldoAtual":4521.221,"UC_short":"3010563962","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.146.018-73 / 3014316328","Quota_pct":5.0,"Consumo":4200.0,"Compensacao":4200.0,"Recebimento":470.0,"SaldoAtual":16008.257,"UC_short":"3014316328","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"4.387.947.018-21 / 3004843618","Quota_pct":2.5,"Consumo":422.0,"Compensacao":422.0,"Recebimento":235.0,"SaldoAtual":1235.245,"UC_short":"3004843618","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.147.018-69 / 3014316329","Quota_pct":15.0,"Consumo":1360.0,"Compensacao":1360.0,"Recebimento":1410.0,"SaldoAtual":6161.116,"UC_short":"3014316329","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"07/2026":[{"UC":"7.635.083.018-82 / 3010610056","Quota_pct":20.0,"Consumo":0.0,"Compensacao":0.0,"Recebimento":2281.46,"SaldoAtual":1746.486,"UC_short":"3010610056","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"4.387.947.018-21 / 3004843618","Quota_pct":2.5,"Consumo":0.0,"Compensacao":0.0,"Recebimento":285.18,"SaldoAtual":1048.245,"UC_short":"3004843618","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"7.589.199.018-60 / 3010563962","Quota_pct":2.5,"Consumo":297.0,"Compensacao":238.64,"Recebimento":285.18,"SaldoAtual":4567.765,"UC_short":"3010563962","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.147.018-69 / 3014316329","Quota_pct":15.0,"Consumo":1440.0,"Compensacao":1440.0,"Recebimento":1711.1,"SaldoAtual":6432.214,"UC_short":"3014316329","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.329.146.018-73 / 3014316328","Quota_pct":5.0,"Consumo":4040.0,"Compensacao":4040.0,"Recebimento":570.37,"SaldoAtual":12538.623,"UC_short":"3014316328","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"256.152.018-51 / 3000287185","Quota_pct":55.0,"Consumo":24280.0,"Compensacao":24280.0,"Recebimento":6274.02,"SaldoAtual":15429.5,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}]}},"UFV INHA\u00daMA":{"periodos":["08/2025","09/2025","10/2025","11/2025","12/2025","01/2026","02/2026","03/2026","04/2026","05/2026","06/2026","07/2026"],"geracao":[10840.0,11960.0,10280.0,9480.0,1720.0,5480.0,7840.0,4000.0,5120.0,4240.0,7600.0,9840.0],"recebimento":[10840.0,11960.0,10280.0,9480.0,1720.0,5480.0,7840.78,4000.0,5120.0,4240.0,7600.0,9700.0],"saldo_geradora":[8440.0,20396.41,30673.33,40150.48,40150.48,40150.48,40150.48,40150.48,40150.48,40150.48,40150.48,40150.48],"rec_periodos":["08/2025","09/2025","10/2025","11/2025","12/2025","01/2026","02/2026","03/2026","04/2026","05/2026","06/2026","07/2026"],"ultimo_periodo":"07/2026","recebedoras_historico":{"08/2025":[{"UC":"1.874.509.018-63 / 3002083978","Quota_pct":50.0,"Consumo":13800.0,"Compensacao":13800.0,"Recebimento":5420.0,"SaldoAtual":24834.175,"UC_short":"3002083978","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.180.193.018-76 / 3014165998","Quota_pct":40.0,"Consumo":3826.0,"Compensacao":3726.0,"Recebimento":4336.0,"SaldoAtual":12020.21,"UC_short":"3014165998","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"846.322.018-75 / 3000946573","Quota_pct":10.0,"Consumo":421.0,"Compensacao":321.0,"Recebimento":1084.0,"SaldoAtual":2672.17,"UC_short":"3000946573","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"09/2025":[{"UC":"1.874.509.018-63 / 3002083978","Quota_pct":0.01,"Consumo":14920.0,"Compensacao":14820.0,"Recebimento":1.2,"SaldoAtual":32728.601,"UC_short":"3002083978","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"5.399.539.018-51 / 3005908408","Quota_pct":99.97,"Consumo":9114.0,"Compensacao":9014.0,"Recebimento":0.0,"SaldoAtual":2830.8,"UC_short":"3005908408","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.180.193.018-76 / 3014165998","Quota_pct":0.01,"Consumo":3371.0,"Compensacao":3271.0,"Recebimento":1.2,"SaldoAtual":12631.086,"UC_short":"3014165998","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"846.322.018-75 / 3000946573","Quota_pct":0.01,"Consumo":428.0,"Compensacao":328.0,"Recebimento":1.2,"SaldoAtual":3436.744,"UC_short":"3000946573","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"10/2025":[{"UC":"1.874.509.018-63 / 3002083978","Quota_pct":0.01,"Consumo":13480.0,"Compensacao":13380.0,"Recebimento":1.03,"SaldoAtual":29611.315,"UC_short":"3002083978","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.180.193.018-76 / 3014165998","Quota_pct":0.01,"Consumo":3301.0,"Compensacao":3201.0,"Recebimento":1.03,"SaldoAtual":9362.856,"UC_short":"3014165998","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"846.322.018-75 / 3000946573","Quota_pct":0.01,"Consumo":344.0,"Compensacao":244.0,"Recebimento":1.03,"SaldoAtual":3111.458,"UC_short":"3000946573","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"11/2025":[{"UC":"1.874.509.018-63 / 3002083978","Quota_pct":0.01,"Consumo":16760.0,"Compensacao":16660.0,"Recebimento":0.95,"SaldoAtual":28133.341,"UC_short":"3002083978","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.180.193.018-76 / 3014165998","Quota_pct":0.01,"Consumo":3933.0,"Compensacao":3833.0,"Recebimento":0.95,"SaldoAtual":6164.402,"UC_short":"3014165998","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"846.322.018-75 / 3000946573","Quota_pct":0.01,"Consumo":360.0,"Compensacao":260.0,"Recebimento":0.95,"SaldoAtual":2869.484,"UC_short":"3000946573","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"12/2025":[{"UC":"1.874.509.018-63 / 3002083978","Quota_pct":0.01,"Consumo":19680.0,"Compensacao":19580.0,"Recebimento":0.17,"SaldoAtual":22575.325,"UC_short":"3002083978","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.180.193.018-76 / 3014165998","Quota_pct":0.01,"Consumo":4220.0,"Compensacao":2334.56,"Recebimento":0.17,"SaldoAtual":2333.348,"UC_short":"3014165998","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"846.322.018-75 / 3000946573","Quota_pct":0.01,"Consumo":589.0,"Compensacao":489.0,"Recebimento":0.17,"SaldoAtual":2611.468,"UC_short":"3000946573","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":99.97,"Consumo":7880.0,"Compensacao":7780.0,"Recebimento":1719.48,"SaldoAtual":17284.106,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"01/2026":[{"UC":"1.874.509.018-63 / 3002083978","Quota_pct":0.01,"Consumo":12880.0,"Compensacao":12780.0,"Recebimento":0.55,"SaldoAtual":12016.823,"UC_short":"3002083978","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.180.193.018-76 / 3014165998","Quota_pct":0.01,"Consumo":1718.0,"Compensacao":0.78,"Recebimento":0.55,"SaldoAtual":0.0,"UC_short":"3014165998","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"846.322.018-75 / 3000946573","Quota_pct":0.01,"Consumo":226.0,"Compensacao":126.0,"Recebimento":0.55,"SaldoAtual":2123.966,"UC_short":"3000946573","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":99.97,"Consumo":7600.0,"Compensacao":7500.0,"Recebimento":5478.36,"SaldoAtual":28518.484,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"02/2026":[{"UC":"846.322.018-75 / 3000946573","Quota_pct":0.01,"Consumo":192.0,"Compensacao":92.0,"Recebimento":0.78,"SaldoAtual":1998.514,"UC_short":"3000946573","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.180.193.018-76 / 3014165998","Quota_pct":0.01,"Consumo":1718.0,"Compensacao":0.78,"Recebimento":0.78,"SaldoAtual":0.0,"UC_short":"3014165998","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.180.193.018-76 / 3014165998","Quota_pct":0.01,"Consumo":0.0,"Compensacao":0.0,"Recebimento":0.78,"SaldoAtual":0.0,"UC_short":"3014165998","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":99.97,"Consumo":7240.0,"Compensacao":7140.0,"Recebimento":7837.65,"SaldoAtual":35776.132,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.874.509.018-63 / 3002083978","Quota_pct":0.01,"Consumo":13560.0,"Compensacao":13460.0,"Recebimento":0.78,"SaldoAtual":10417.371,"UC_short":"3002083978","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"03/2026":[{"UC":"846.322.018-75 / 3000946573","Quota_pct":0.01,"Consumo":166.0,"Compensacao":66.0,"Recebimento":0.4,"SaldoAtual":1907.298,"UC_short":"3000946573","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.180.193.018-76 / 3014165998","Quota_pct":0.01,"Consumo":3169.0,"Compensacao":0.4,"Recebimento":0.4,"SaldoAtual":0.0,"UC_short":"3014165998","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":0.01,"Consumo":7600.0,"Compensacao":7500.0,"Recebimento":0.4,"SaldoAtual":36868.532,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.874.509.018-63 / 3002083978","Quota_pct":99.97,"Consumo":9440.0,"Compensacao":9340.0,"Recebimento":3998.8,"SaldoAtual":6778.155,"UC_short":"3002083978","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"04/2026":[{"UC":"846.322.018-75 / 3000946573","Quota_pct":0.01,"Consumo":182.0,"Compensacao":82.0,"Recebimento":0.51,"SaldoAtual":1841.698,"UC_short":"3000946573","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.180.193.018-76 / 3014165998","Quota_pct":0.01,"Consumo":2792.0,"Compensacao":0.51,"Recebimento":0.51,"SaldoAtual":0.0,"UC_short":"3014165998","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":0.01,"Consumo":7440.0,"Compensacao":7340.0,"Recebimento":0.51,"SaldoAtual":37577.044,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.874.509.018-63 / 3002083978","Quota_pct":99.97,"Consumo":10680.0,"Compensacao":10580.0,"Recebimento":5118.46,"SaldoAtual":10376.955,"UC_short":"3002083978","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"05/2026":[{"UC":"1.874.509.018-63 / 3002083978","Quota_pct":99.97,"Consumo":9800.0,"Compensacao":9700.0,"Recebimento":4238.73,"SaldoAtual":14175.419,"UC_short":"3002083978","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.180.193.018-76 / 3014165998","Quota_pct":0.01,"Consumo":3081.0,"Compensacao":0.42,"Recebimento":0.42,"SaldoAtual":0.0,"UC_short":"3014165998","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"846.322.018-75 / 3000946573","Quota_pct":0.01,"Consumo":174.0,"Compensacao":74.0,"Recebimento":0.42,"SaldoAtual":1760.21,"UC_short":"3000946573","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":0.01,"Consumo":7920.0,"Compensacao":7820.0,"Recebimento":0.42,"SaldoAtual":36637.468,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"06/2026":[{"UC":"1.874.509.018-63 / 3002083978","Quota_pct":99.97,"Consumo":8920.0,"Compensacao":8820.0,"Recebimento":7597.72,"SaldoAtual":17974.147,"UC_short":"3002083978","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":0.01,"Consumo":9680.0,"Compensacao":9580.0,"Recebimento":0.76,"SaldoAtual":27143.628,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.180.193.018-76 / 3014165998","Quota_pct":0.01,"Consumo":2340.0,"Compensacao":2240.0,"Recebimento":0.76,"SaldoAtual":0.0,"UC_short":"3014165998","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"846.322.018-75 / 3000946573","Quota_pct":0.01,"Consumo":182.0,"Compensacao":82.0,"Recebimento":0.76,"SaldoAtual":1686.634,"UC_short":"3000946573","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"07/2026":[{"UC":"11.180.193.018-76 / 3014165998","Quota_pct":0.01,"Consumo":1547.0,"Compensacao":1447.0,"Recebimento":0.97,"SaldoAtual":2737.99,"UC_short":"3014165998","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.874.509.018-63 / 3002083978","Quota_pct":99.97,"Consumo":0.0,"Compensacao":0.0,"Recebimento":9697.09,"SaldoAtual":26571.867,"UC_short":"3002083978","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.916.997.018-30 / 3007676365","Quota_pct":0.01,"Consumo":6800.0,"Compensacao":6700.0,"Recebimento":0.97,"SaldoAtual":20566.398,"UC_short":"3007676365","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"846.322.018-75 / 3000946573","Quota_pct":0.01,"Consumo":0.0,"Compensacao":0.0,"Recebimento":0.97,"SaldoAtual":1605.394,"UC_short":"3000946573","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}]}},"UFV SANTA CLARA":{"periodos":["08/2025","09/2025","10/2025","11/2025","12/2025","01/2026","02/2026","03/2026","04/2026","05/2026","06/2026","07/2026","08/2026"],"geracao":[11374.0,12843.0,11869.0,12884.0,11029.0,11660.0,10661.0,9488.0,8214.0,13112.0,10472.0,11121.0,11492.0],"recebimento":[11374.0,12841.0,11869.0,12884.0,11029.0,11660.0,10661.0,9488.0,8214.0,13112.0,10472.0,11121.0,11492.0],"saldo_geradora":[792.0,792.0,792.0,792.0,792.0,792.0,792.0,792.0,792.0,792.0,792.0,792.0,792.0],"rec_periodos":["08/2025","09/2025","10/2025","11/2025","12/2025","01/2026","02/2026","03/2026","04/2026","05/2026","06/2026","07/2026","08/2026"],"ultimo_periodo":"08/2026","recebedoras_historico":{"08/2025":[{"UC":"2.819.098.018-74 / 3003122189","Quota_pct":10.0,"Consumo":868.0,"Compensacao":818.0,"Recebimento":1137.4,"SaldoAtual":6453.0,"UC_short":"3003122189","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.377.756.018-98 / 3007049761","Quota_pct":79.99,"Consumo":9240.0,"Compensacao":9140.0,"Recebimento":9098.06,"SaldoAtual":12838.616,"UC_short":"3007049761","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"3.386.338.018-00 / 3003773148","Quota_pct":10.0,"Consumo":967.0,"Compensacao":867.0,"Recebimento":1137.4,"SaldoAtual":1982.6,"UC_short":"3003773148","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":0.01,"Consumo":2800.0,"Compensacao":2700.0,"Recebimento":1.14,"SaldoAtual":1198.184,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"09/2025":[{"UC":"2.819.098.018-74 / 3003122189","Quota_pct":10.0,"Consumo":362.0,"Compensacao":312.0,"Recebimento":1284.1,"SaldoAtual":7425.1,"UC_short":"3003122189","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.377.756.018-98 / 3007049761","Quota_pct":79.99,"Consumo":10480.0,"Compensacao":10380.0,"Recebimento":10271.52,"SaldoAtual":12730.132,"UC_short":"3007049761","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"3.386.338.018-00 / 3003773148","Quota_pct":10.0,"Consumo":879.0,"Compensacao":779.0,"Recebimento":1284.1,"SaldoAtual":2253.0,"UC_short":"3003773148","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":0.01,"Consumo":3080.0,"Compensacao":2980.0,"Recebimento":1.28,"SaldoAtual":1066.268,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"10/2025":[{"UC":"6.377.756.018-98 / 3007049761","Quota_pct":79.99,"Consumo":10000.0,"Compensacao":9900.0,"Recebimento":9494.01,"SaldoAtual":12324.145,"UC_short":"3007049761","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"2.819.098.018-74 / 3003122189","Quota_pct":10.0,"Consumo":392.0,"Compensacao":342.0,"Recebimento":1186.9,"SaldoAtual":8270.0,"UC_short":"3003122189","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"3.386.338.018-00 / 3003773148","Quota_pct":10.0,"Consumo":816.0,"Compensacao":716.0,"Recebimento":1186.9,"SaldoAtual":2758.1,"UC_short":"3003773148","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":0.01,"Consumo":3240.0,"Compensacao":3140.0,"Recebimento":1.19,"SaldoAtual":699.455,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"11/2025":[{"UC":"2.819.098.018-74 / 3003122189","Quota_pct":10.0,"Consumo":2442.0,"Compensacao":2392.0,"Recebimento":1288.4,"SaldoAtual":7166.4,"UC_short":"3003122189","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.377.756.018-98 / 3007049761","Quota_pct":79.99,"Consumo":9920.0,"Compensacao":9820.0,"Recebimento":10305.91,"SaldoAtual":3784.145,"UC_short":"3007049761","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"3.386.338.018-00 / 3003773148","Quota_pct":10.0,"Consumo":873.0,"Compensacao":773.0,"Recebimento":1288.4,"SaldoAtual":3229.0,"UC_short":"3003773148","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":0.01,"Consumo":2720.0,"Compensacao":700.74,"Recebimento":1.29,"SaldoAtual":0.0,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"12/2025":[{"UC":"2.819.098.018-74 / 3003122189","Quota_pct":0.01,"Consumo":543.0,"Compensacao":493.0,"Recebimento":1.1,"SaldoAtual":6674.503,"UC_short":"3003122189","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.377.756.018-98 / 3007049761","Quota_pct":89.98,"Consumo":10560.0,"Compensacao":10460.0,"Recebimento":9923.89,"SaldoAtual":4270.057,"UC_short":"3007049761","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"3.386.338.018-00 / 3003773148","Quota_pct":10.0,"Consumo":863.0,"Compensacao":763.0,"Recebimento":1102.9,"SaldoAtual":3744.4,"UC_short":"3003773148","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":0.01,"Consumo":3160.0,"Compensacao":1.1,"Recebimento":1.1,"SaldoAtual":0.0,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"01/2026":[{"UC":"6.377.756.018-98 / 3007049761","Quota_pct":89.98,"Consumo":9200.0,"Compensacao":9100.0,"Recebimento":10491.67,"SaldoAtual":3733.951,"UC_short":"3007049761","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"3.386.338.018-00 / 3003773148","Quota_pct":10.0,"Consumo":762.0,"Compensacao":662.0,"Recebimento":1166.0,"SaldoAtual":4084.3,"UC_short":"3003773148","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"2.819.098.018-74 / 3003122189","Quota_pct":0.01,"Consumo":562.0,"Compensacao":512.0,"Recebimento":1.17,"SaldoAtual":6163.669,"UC_short":"3003122189","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":0.01,"Consumo":3360.0,"Compensacao":1.17,"Recebimento":1.17,"SaldoAtual":0.0,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"02/2026":[{"UC":"6.377.756.018-98 / 3007049761","Quota_pct":89.98,"Consumo":9920.0,"Compensacao":9820.0,"Recebimento":9592.77,"SaldoAtual":5125.619,"UC_short":"3007049761","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"3.386.338.018-00 / 3003773148","Quota_pct":10.0,"Consumo":924.0,"Compensacao":824.0,"Recebimento":1066.1,"SaldoAtual":4588.3,"UC_short":"3003773148","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"2.819.098.018-74 / 3003122189","Quota_pct":0.01,"Consumo":256.0,"Compensacao":206.0,"Recebimento":1.07,"SaldoAtual":5958.735,"UC_short":"3003122189","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":0.01,"Consumo":3040.0,"Compensacao":1.07,"Recebimento":1.07,"SaldoAtual":0.0,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"03/2026":[{"UC":"6.377.756.018-98 / 3007049761","Quota_pct":99.97,"Consumo":11880.0,"Compensacao":11780.0,"Recebimento":9485.15,"SaldoAtual":4898.387,"UC_short":"3007049761","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"3.386.338.018-00 / 3003773148","Quota_pct":0.01,"Consumo":842.0,"Compensacao":742.0,"Recebimento":0.95,"SaldoAtual":4830.4,"UC_short":"3003773148","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"2.819.098.018-74 / 3003122189","Quota_pct":0.01,"Consumo":589.0,"Compensacao":539.0,"Recebimento":0.95,"SaldoAtual":5420.684,"UC_short":"3003122189","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":0.01,"Consumo":3200.0,"Compensacao":0.95,"Recebimento":0.95,"SaldoAtual":0.0,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"04/2026":[{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":0.01,"Consumo":0.0,"Compensacao":0.0,"Recebimento":0.0,"SaldoAtual":54.692,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":0.01,"Consumo":2960.0,"Compensacao":2860.0,"Recebimento":0.82,"SaldoAtual":469.881,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"2.819.098.018-74 / 3003122189","Quota_pct":0.01,"Consumo":613.0,"Compensacao":563.0,"Recebimento":0.82,"SaldoAtual":4858.505,"UC_short":"3003122189","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.377.756.018-98 / 3007049761","Quota_pct":99.97,"Consumo":9600.0,"Compensacao":9500.0,"Recebimento":8211.54,"SaldoAtual":2603.54,"UC_short":"3007049761","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"3.386.338.018-00 / 3003773148","Quota_pct":0.01,"Consumo":848.0,"Compensacao":748.0,"Recebimento":0.82,"SaldoAtual":4089.349,"UC_short":"3003773148","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"05/2026":[{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":0.01,"Consumo":0.0,"Compensacao":0.0,"Recebimento":0.0,"SaldoAtual":79.476,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":0.01,"Consumo":3080.0,"Compensacao":2980.0,"Recebimento":1.31,"SaldoAtual":3249.388,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.377.756.018-98 / 3007049761","Quota_pct":99.97,"Consumo":8080.0,"Compensacao":7980.0,"Recebimento":13108.07,"SaldoAtual":1315.076,"UC_short":"3007049761","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"3.386.338.018-00 / 3003773148","Quota_pct":0.01,"Consumo":895.0,"Compensacao":795.0,"Recebimento":1.31,"SaldoAtual":3342.17,"UC_short":"3003773148","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"2.819.098.018-74 / 3003122189","Quota_pct":0.01,"Consumo":217.0,"Compensacao":167.0,"Recebimento":1.31,"SaldoAtual":4692.816,"UC_short":"3003122189","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"06/2026":[{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":0.01,"Consumo":2960.0,"Compensacao":2860.0,"Recebimento":1.05,"SaldoAtual":2500.843,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":0.01,"Consumo":0.0,"Compensacao":0.0,"Recebimento":0.0,"SaldoAtual":24.784,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.377.756.018-98 / 3007049761","Quota_pct":99.97,"Consumo":8880.0,"Compensacao":8780.0,"Recebimento":10468.86,"SaldoAtual":6443.142,"UC_short":"3007049761","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"3.386.338.018-00 / 3003773148","Quota_pct":0.01,"Consumo":894.0,"Compensacao":794.0,"Recebimento":1.05,"SaldoAtual":2548.481,"UC_short":"3003773148","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"2.819.098.018-74 / 3003122189","Quota_pct":0.01,"Consumo":623.0,"Compensacao":573.0,"Recebimento":1.05,"SaldoAtual":4120.864,"UC_short":"3003122189","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"07/2026":[{"UC":"3.386.338.018-00 / 3003773148","Quota_pct":0.01,"Consumo":825.0,"Compensacao":725.0,"Recebimento":1.11,"SaldoAtual":1755.529,"UC_short":"3003773148","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.377.756.018-98 / 3007049761","Quota_pct":99.97,"Consumo":9000.0,"Compensacao":8900.0,"Recebimento":11117.66,"SaldoAtual":8132.001,"UC_short":"3007049761","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":0.01,"Consumo":0.0,"Compensacao":0.0,"Recebimento":0.0,"SaldoAtual":42.399,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":0.01,"Consumo":2920.0,"Compensacao":2820.0,"Recebimento":1.11,"SaldoAtual":4644.925,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"2.819.098.018-74 / 3003122189","Quota_pct":0.01,"Consumo":648.0,"Compensacao":598.0,"Recebimento":1.11,"SaldoAtual":3523.976,"UC_short":"3003122189","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"08/2026":[{"UC":"2.819.098.018-74 / 3003122189","Quota_pct":0.01,"Consumo":0.0,"Compensacao":0.0,"Recebimento":1.15,"SaldoAtual":0.0,"UC_short":"3003122189","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"3.386.338.018-00 / 3003773148","Quota_pct":0.01,"Consumo":0.0,"Compensacao":0.0,"Recebimento":1.15,"SaldoAtual":1031.641,"UC_short":"3003773148","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"6.377.756.018-98 / 3007049761","Quota_pct":99.97,"Consumo":0.0,"Compensacao":0.0,"Recebimento":11488.55,"SaldoAtual":10349.665,"UC_short":"3007049761","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":0.01,"Consumo":0.0,"Compensacao":0.0,"Recebimento":0.0,"SaldoAtual":0.0,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.596.976.018-51 / 3001776932","Quota_pct":0.01,"Consumo":0.0,"Compensacao":0.0,"Recebimento":1.15,"SaldoAtual":0.0,"UC_short":"3001776932","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}]}},"UFV SANTA DA PEDRA (JULIANO)":{"periodos":["08/2025","09/2025","10/2025","11/2025","12/2025","01/2026","02/2026","03/2026","04/2026","05/2026","06/2026","07/2026","08/2026"],"geracao":[13320.0,14600.0,12600.0,14360.0,11680.0,12400.0,12200.0,9480.0,10200.0,12440.0,11440.0,12560.0,12760.0],"recebimento":[13260.0,14500.0,12540.0,14300.0,11620.0,12340.0,12140.0,9420.0,10060.0,12260.0,11220.0,12340.0,12580.0],"saldo_geradora":[13240.0,13240.0,13240.0,13240.0,13240.0,13240.0,13240.0,13240.0,13240.0,13240.0,13240.0,0.0,0.0],"rec_periodos":["08/2025","09/2025","10/2025","11/2025","12/2025","01/2026","02/2026","03/2026","04/2026","05/2026","06/2026","07/2026","08/2026"],"ultimo_periodo":"08/2026","recebedoras_historico":{"08/2025":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":20240.0,"Compensacao":20140.0,"Recebimento":13260.0,"SaldoAtual":9615.75,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.818.340.018-58 / 3002020710","Quota_pct":0.0,"Consumo":1932.0,"Compensacao":1932.0,"Recebimento":0.0,"SaldoAtual":8734.0,"UC_short":"3002020710","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"09/2025":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":23280.0,"Compensacao":23180.0,"Recebimento":14500.0,"SaldoAtual":13901.65,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.818.340.018-58 / 3002020710","Quota_pct":0.0,"Consumo":1367.0,"Compensacao":1367.0,"Recebimento":0.0,"SaldoAtual":9720.0,"UC_short":"3002020710","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"10/2025":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":22400.0,"Compensacao":22300.0,"Recebimento":12540.0,"SaldoAtual":13180.85,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.818.340.018-58 / 3002020710","Quota_pct":0.0,"Consumo":1303.0,"Compensacao":1303.0,"Recebimento":0.0,"SaldoAtual":11032.0,"UC_short":"3002020710","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"11/2025":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":21240.0,"Compensacao":21140.0,"Recebimento":14300.0,"SaldoAtual":17340.45,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.818.340.018-58 / 3002020710","Quota_pct":0.0,"Consumo":1209.0,"Compensacao":1209.0,"Recebimento":0.0,"SaldoAtual":11998.0,"UC_short":"3002020710","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"12/2025":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":25080.0,"Compensacao":24980.0,"Recebimento":11620.0,"SaldoAtual":12517.45,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.818.340.018-58 / 3002020710","Quota_pct":0.0,"Consumo":1505.0,"Compensacao":1505.0,"Recebimento":0.0,"SaldoAtual":12664.0,"UC_short":"3002020710","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"01/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":26160.0,"Compensacao":26060.0,"Recebimento":12340.0,"SaldoAtual":7595.85,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.818.340.018-58 / 3002020710","Quota_pct":0.0,"Consumo":1423.0,"Compensacao":1423.0,"Recebimento":0.0,"SaldoAtual":13932.0,"UC_short":"3002020710","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"02/2026":[{"UC":"1.818.340.018-58 / 3002020710","Quota_pct":0.0,"Consumo":1189.0,"Compensacao":1189.0,"Recebimento":0.0,"SaldoAtual":14763.0,"UC_short":"3002020710","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":24640.0,"Compensacao":24540.0,"Recebimento":12140.0,"SaldoAtual":5135.25,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"03/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":26600.0,"Compensacao":26342.82,"Recebimento":9420.0,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.818.340.018-58 / 3002020710","Quota_pct":0.0,"Consumo":1210.0,"Compensacao":1210.0,"Recebimento":0.0,"SaldoAtual":15873.0,"UC_short":"3002020710","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"04/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":24480.0,"Compensacao":19922.43,"Recebimento":10060.0,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.818.340.018-58 / 3002020710","Quota_pct":0.0,"Consumo":1435.0,"Compensacao":1435.0,"Recebimento":0.0,"SaldoAtual":16215.0,"UC_short":"3002020710","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"05/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":25920.0,"Compensacao":25365.1,"Recebimento":12260.0,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.818.340.018-58 / 3002020710","Quota_pct":0.0,"Consumo":1724.0,"Compensacao":1724.0,"Recebimento":0.0,"SaldoAtual":16487.0,"UC_short":"3002020710","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"06/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":25360.0,"Compensacao":23803.85,"Recebimento":11220.0,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.818.340.018-58 / 3002020710","Quota_pct":0.0,"Consumo":1654.0,"Compensacao":1654.0,"Recebimento":0.0,"SaldoAtual":16378.0,"UC_short":"3002020710","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"07/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":22320.0,"Compensacao":22320.0,"Recebimento":12340.0,"SaldoAtual":15429.5,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.818.340.018-58 / 3002020710","Quota_pct":0.0,"Consumo":1651.0,"Compensacao":1651.0,"Recebimento":0.0,"SaldoAtual":16538.0,"UC_short":"3002020710","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"08/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":100.0,"Consumo":24280.0,"Compensacao":24280.0,"Recebimento":12580.0,"SaldoAtual":33634.125,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"1.818.340.018-58 / 3002020710","Quota_pct":0.0,"Consumo":0.0,"Compensacao":0.0,"Recebimento":0.0,"SaldoAtual":0.0,"UC_short":"3002020710","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}]}},"UFV SOLAR DO NORTE":{"periodos":["08/2025","09/2025","10/2025","11/2025","12/2025","01/2026","02/2026","03/2026","04/2026","05/2026","06/2026","07/2026","08/2026"],"geracao":[11480.0,13514.0,12012.0,14146.0,10695.0,11966.0,11731.0,11671.0,10402.0,13417.0,11480.0,12257.0,12579.0],"recebimento":[11330.0,12214.0,10612.0,13426.0,10695.0,11744.0,11659.0,11479.0,10321.0,13370.0,11395.0,12201.0,12516.0],"saldo_geradora":[1079.88,997.18,900.0,900.0,900.0,900.0,900.0,900.0,900.0,900.0,900.0,900.0,900.0],"rec_periodos":["08/2025","09/2025","10/2025","11/2025","12/2025","01/2026","02/2026","03/2026","04/2026","05/2026","06/2026","07/2026","08/2026"],"ultimo_periodo":"08/2026","recebedoras_historico":{"08/2025":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":85.0,"Consumo":20240.0,"Compensacao":20140.0,"Recebimento":9630.5,"SaldoAtual":9615.75,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"794.210.018-32 / 3000889842","Quota_pct":15.0,"Consumo":2788.0,"Compensacao":1699.5,"Recebimento":1699.5,"SaldoAtual":0.0,"UC_short":"3000889842","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"09/2025":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":85.0,"Consumo":23280.0,"Compensacao":23180.0,"Recebimento":10381.9,"SaldoAtual":13901.65,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"794.210.018-32 / 3000889842","Quota_pct":15.0,"Consumo":2033.0,"Compensacao":1832.1,"Recebimento":1832.1,"SaldoAtual":0.0,"UC_short":"3000889842","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"10/2025":[{"UC":"11.806.566.018-50 / 3014796929","Quota_pct":5.0,"Consumo":371.0,"Compensacao":321.0,"Recebimento":530.6,"SaldoAtual":209.6,"UC_short":"3014796929","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"794.210.018-32 / 3000889842","Quota_pct":30.0,"Consumo":1852.0,"Compensacao":1752.0,"Recebimento":3183.6,"SaldoAtual":1431.6,"UC_short":"3000889842","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"10.385.262.018-87 / 3013368708","Quota_pct":2.0,"Consumo":184.0,"Compensacao":134.0,"Recebimento":212.24,"SaldoAtual":78.24,"UC_short":"3013368708","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"256.152.018-51 / 3000287185","Quota_pct":60.0,"Consumo":22400.0,"Compensacao":22300.0,"Recebimento":6367.2,"SaldoAtual":13180.85,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"787.982.018-36 / 3000882584","Quota_pct":3.0,"Consumo":99.0,"Compensacao":49.0,"Recebimento":318.36,"SaldoAtual":269.36,"UC_short":"3000882584","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"11/2025":[{"UC":"10.385.262.018-87 / 3013368708","Quota_pct":2.0,"Consumo":169.0,"Compensacao":119.0,"Recebimento":268.52,"SaldoAtual":227.76,"UC_short":"3013368708","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"794.210.018-32 / 3000889842","Quota_pct":30.0,"Consumo":1814.0,"Compensacao":1714.0,"Recebimento":4027.8,"SaldoAtual":3745.4,"UC_short":"3000889842","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.806.566.018-50 / 3014796929","Quota_pct":5.0,"Consumo":257.0,"Compensacao":207.0,"Recebimento":671.3,"SaldoAtual":673.9,"UC_short":"3014796929","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"787.982.018-36 / 3000882584","Quota_pct":3.0,"Consumo":84.0,"Compensacao":34.0,"Recebimento":402.78,"SaldoAtual":638.14,"UC_short":"3000882584","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"256.152.018-51 / 3000287185","Quota_pct":60.0,"Consumo":21240.0,"Compensacao":21140.0,"Recebimento":8055.6,"SaldoAtual":17340.45,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"12/2025":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":60.0,"Consumo":25080.0,"Compensacao":24980.0,"Recebimento":6417.0,"SaldoAtual":12517.45,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"787.982.018-36 / 3000882584","Quota_pct":3.0,"Consumo":142.0,"Compensacao":92.0,"Recebimento":320.85,"SaldoAtual":866.99,"UC_short":"3000882584","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"794.210.018-32 / 3000889842","Quota_pct":30.0,"Consumo":1398.0,"Compensacao":1298.0,"Recebimento":3208.5,"SaldoAtual":5655.9,"UC_short":"3000889842","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.806.566.018-50 / 3014796929","Quota_pct":5.0,"Consumo":372.0,"Compensacao":322.0,"Recebimento":534.75,"SaldoAtual":886.65,"UC_short":"3014796929","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"10.385.262.018-87 / 3013368708","Quota_pct":2.0,"Consumo":132.0,"Compensacao":82.0,"Recebimento":213.9,"SaldoAtual":359.66,"UC_short":"3013368708","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"01/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":60.0,"Consumo":26160.0,"Compensacao":26060.0,"Recebimento":7046.4,"SaldoAtual":7595.85,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"787.982.018-36 / 3000882584","Quota_pct":3.0,"Consumo":90.0,"Compensacao":40.0,"Recebimento":352.32,"SaldoAtual":1179.31,"UC_short":"3000882584","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"794.210.018-32 / 3000889842","Quota_pct":30.0,"Consumo":1521.0,"Compensacao":1421.0,"Recebimento":3523.2,"SaldoAtual":7758.1,"UC_short":"3000889842","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.806.566.018-50 / 3014796929","Quota_pct":5.0,"Consumo":490.0,"Compensacao":440.0,"Recebimento":587.2,"SaldoAtual":1033.85,"UC_short":"3014796929","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"10.385.262.018-87 / 3013368708","Quota_pct":2.0,"Consumo":90.0,"Compensacao":40.0,"Recebimento":234.88,"SaldoAtual":554.54,"UC_short":"3013368708","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"02/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":60.0,"Consumo":24640.0,"Compensacao":24540.0,"Recebimento":6995.4,"SaldoAtual":5135.25,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"787.982.018-36 / 3000882584","Quota_pct":3.0,"Consumo":114.0,"Compensacao":64.0,"Recebimento":349.77,"SaldoAtual":1465.08,"UC_short":"3000882584","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"794.210.018-32 / 3000889842","Quota_pct":30.0,"Consumo":1888.0,"Compensacao":1788.0,"Recebimento":3497.7,"SaldoAtual":9467.8,"UC_short":"3000889842","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.806.566.018-50 / 3014796929","Quota_pct":5.0,"Consumo":332.0,"Compensacao":282.0,"Recebimento":582.95,"SaldoAtual":1334.8,"UC_short":"3014796929","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"10.385.262.018-87 / 3013368708","Quota_pct":2.0,"Consumo":116.0,"Compensacao":66.0,"Recebimento":233.18,"SaldoAtual":721.72,"UC_short":"3013368708","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"03/2026":[{"UC":"11.806.566.018-50 / 3014796929","Quota_pct":3.0,"Consumo":340.0,"Compensacao":290.0,"Recebimento":344.37,"SaldoAtual":1389.17,"UC_short":"3014796929","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"10.385.262.018-87 / 3013368708","Quota_pct":2.0,"Consumo":136.0,"Compensacao":86.0,"Recebimento":229.58,"SaldoAtual":865.3,"UC_short":"3013368708","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"787.982.018-36 / 3000882584","Quota_pct":2.0,"Consumo":101.0,"Compensacao":51.0,"Recebimento":229.58,"SaldoAtual":1643.66,"UC_short":"3000882584","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"794.210.018-32 / 3000889842","Quota_pct":10.0,"Consumo":1918.0,"Compensacao":1818.0,"Recebimento":1147.9,"SaldoAtual":8797.7,"UC_short":"3000889842","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"256.152.018-51 / 3000287185","Quota_pct":83.0,"Consumo":26600.0,"Compensacao":26342.82,"Recebimento":9527.57,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"04/2026":[{"UC":"256.152.018-51 / 3000287185","Quota_pct":83.0,"Consumo":24480.0,"Compensacao":19922.43,"Recebimento":8566.43,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"10.385.262.018-87 / 3013368708","Quota_pct":2.0,"Consumo":137.0,"Compensacao":87.0,"Recebimento":206.42,"SaldoAtual":984.72,"UC_short":"3013368708","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.806.566.018-50 / 3014796929","Quota_pct":3.0,"Consumo":369.0,"Compensacao":319.0,"Recebimento":309.63,"SaldoAtual":1379.8,"UC_short":"3014796929","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"787.982.018-36 / 3000882584","Quota_pct":2.0,"Consumo":140.0,"Compensacao":90.0,"Recebimento":206.42,"SaldoAtual":1760.08,"UC_short":"3000882584","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"794.210.018-32 / 3000889842","Quota_pct":10.0,"Consumo":1551.0,"Compensacao":1451.0,"Recebimento":1032.1,"SaldoAtual":8378.8,"UC_short":"3000889842","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"05/2026":[{"UC":"10.385.262.018-87 / 3013368708","Quota_pct":2.0,"Consumo":166.0,"Compensacao":116.0,"Recebimento":267.4,"SaldoAtual":1136.12,"UC_short":"3013368708","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.806.566.018-50 / 3014796929","Quota_pct":3.0,"Consumo":521.0,"Compensacao":471.0,"Recebimento":401.1,"SaldoAtual":1309.9,"UC_short":"3014796929","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"787.982.018-36 / 3000882584","Quota_pct":2.0,"Consumo":108.0,"Compensacao":58.0,"Recebimento":267.4,"SaldoAtual":1969.48,"UC_short":"3000882584","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"794.210.018-32 / 3000889842","Quota_pct":10.0,"Consumo":1847.0,"Compensacao":1747.0,"Recebimento":1337.0,"SaldoAtual":7968.8,"UC_short":"3000889842","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"256.152.018-51 / 3000287185","Quota_pct":83.0,"Consumo":25920.0,"Compensacao":25365.1,"Recebimento":11097.1,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"06/2026":[{"UC":"10.385.262.018-87 / 3013368708","Quota_pct":2.0,"Consumo":145.0,"Compensacao":95.0,"Recebimento":227.9,"SaldoAtual":1269.02,"UC_short":"3013368708","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"787.982.018-36 / 3000882584","Quota_pct":2.0,"Consumo":102.0,"Compensacao":52.0,"Recebimento":227.9,"SaldoAtual":2145.38,"UC_short":"3000882584","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.806.566.018-50 / 3014796929","Quota_pct":3.0,"Consumo":457.0,"Compensacao":407.0,"Recebimento":341.85,"SaldoAtual":1244.75,"UC_short":"3014796929","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"794.210.018-32 / 3000889842","Quota_pct":10.0,"Consumo":2421.0,"Compensacao":2321.0,"Recebimento":1139.5,"SaldoAtual":6787.3,"UC_short":"3000889842","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"256.152.018-51 / 3000287185","Quota_pct":83.0,"Consumo":25360.0,"Compensacao":23803.85,"Recebimento":9457.85,"SaldoAtual":0.0,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"07/2026":[{"UC":"10.385.262.018-87 / 3013368708","Quota_pct":1.0,"Consumo":105.0,"Compensacao":55.0,"Recebimento":122.01,"SaldoAtual":1336.03,"UC_short":"3013368708","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"787.982.018-36 / 3000882584","Quota_pct":1.0,"Consumo":182.0,"Compensacao":132.0,"Recebimento":122.01,"SaldoAtual":2135.39,"UC_short":"3000882584","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"794.210.018-32 / 3000889842","Quota_pct":3.0,"Consumo":3444.0,"Compensacao":3344.0,"Recebimento":366.03,"SaldoAtual":3809.33,"UC_short":"3000889842","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"11.806.566.018-50 / 3014796929","Quota_pct":5.0,"Consumo":493.0,"Compensacao":443.0,"Recebimento":610.05,"SaldoAtual":1411.8,"UC_short":"3014796929","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"256.152.018-51 / 3000287185","Quota_pct":90.0,"Consumo":22320.0,"Compensacao":22320.0,"Recebimento":10980.9,"SaldoAtual":15429.5,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}],"08/2026":[{"UC":"11.806.566.018-50 / 3014796929","Quota_pct":5.0,"Consumo":0.0,"Compensacao":0.0,"Recebimento":625.8,"SaldoAtual":0.0,"UC_short":"3014796929","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"256.152.018-51 / 3000287185","Quota_pct":90.0,"Consumo":24280.0,"Compensacao":24280.0,"Recebimento":11264.4,"SaldoAtual":33634.125,"UC_short":"3000287185","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"794.210.018-32 / 3000889842","Quota_pct":3.0,"Consumo":0.0,"Compensacao":0.0,"Recebimento":375.48,"SaldoAtual":0.0,"UC_short":"3000889842","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"10.385.262.018-87 / 3013368708","Quota_pct":1.0,"Consumo":0.0,"Compensacao":0.0,"Recebimento":125.16,"SaldoAtual":0.0,"UC_short":"3013368708","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""},{"UC":"787.982.018-36 / 3000882584","Quota_pct":1.0,"Consumo":0.0,"Compensacao":0.0,"Recebimento":125.16,"SaldoAtual":0.0,"UC_short":"3000882584","Modalidade":"Ger. Compartilhada-Recebedora","Usina_Origem":""}]}}},"resumo":[{"usina":"GLOBO EIRELI","periodo":"08/2026","geracao":0.0,"recebimento":23844.4,"eficiencia":0.0},{"usina":"UFV FB","periodo":"08/2026","geracao":11800.0,"recebimento":11800.0,"eficiencia":100.0},{"usina":"UFV FONTE LIMPA I (ULYANA)","periodo":"07/2026","geracao":12200.0,"recebimento":12180.0,"eficiencia":99.84},{"usina":"UFV FONTE LIMPA II (NOVA SERRANA)","periodo":"07/2026","geracao":11480.0,"recebimento":11407.32,"eficiencia":99.37},{"usina":"UFV INHA\u00daMA","periodo":"07/2026","geracao":9840.0,"recebimento":9700.0,"eficiencia":98.58},{"usina":"UFV SANTA CLARA","periodo":"08/2026","geracao":11492.0,"recebimento":11492.0,"eficiencia":100.0},{"usina":"UFV SANTA DA PEDRA (JULIANO)","periodo":"08/2026","geracao":12760.0,"recebimento":12580.0,"eficiencia":98.59},{"usina":"UFV SOLAR DO NORTE","periodo":"08/2026","geracao":12579.0,"recebimento":12516.0,"eficiencia":99.5}]};
+
+// ===================== STATE =====================
+let selectedPeriodo = DATA.periodos_all[DATA.periodos_all.length - 1];
+let selectedUsina = DATA.usinas[0];
+let chartGerRec = null;
+let chartRateio = null;
+const donutCharts = {};
+
+// ===================== HELPERS =====================
+function getNome(uc_short) {
+  const k = uc_short.replace(/\s/g,'');
+  return NOMES[k] || ('UC ' + k);
+}
+function fmt(n) { return Number(n).toLocaleString('pt-BR', {maximumFractionDigits:1}); }
+function pct(v, t) { return t > 0 ? Math.round(v/t*100) : 0; }
+
+function getEficienciaColor(e) {
+  if (e >= 90) return '#10b981';
+  if (e >= 70) return '#f59e0b';
+  return '#ef4444';
+}
+
+// ===================== PERIOD BUTTONS =====================
+function renderPeriodButtons() {
+  const cont = document.getElementById('period-buttons');
+  cont.innerHTML = '';
+  cont.style.display = 'flex';
+  cont.style.gap = '6px';
+  cont.style.flexWrap = 'wrap';
+  DATA.periodos_all.forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'period-btn' + (p === selectedPeriodo ? ' active' : '');
+    btn.textContent = p;
+    btn.onclick = () => { selectedPeriodo = p; renderAll(); };
+    cont.appendChild(btn);
+  });
+  document.getElementById('badge-periodo').textContent = selectedPeriodo;
+}
+
+// ===================== KPI CARDS =====================
+function renderKPIs() {
+  const grid = document.getElementById('kpi-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  let totalGen = 0, totalRec = 0, totalSaldo = 0, totalSaldoGer = 0, totalGenAcum = 0;
+  const ucsSeenKPI = new Set();
+
+  const periodIdx = (DATA.periodos_all && selectedPeriodo) ? DATA.periodos_all.indexOf(selectedPeriodo) : -1;
+  const periodosAte = (DATA.periodos_all && periodIdx >= 0) ? DATA.periodos_all.slice(0, periodIdx + 1) : (DATA.periodos_all || []);
+
+  if (DATA.usinas && DATA.dashboard_data) {
+    DATA.usinas.forEach(u => {
+      if (u === 'GLOBO EIRELI') return;
+      const d = DATA.dashboard_data[u];
+      if (!d) return;
+
+      if (d.periodos && d.geracao) {
+        const idx = d.periodos.indexOf(selectedPeriodo);
+        if (idx >= 0 && typeof d.geracao[idx] === 'number') {
+          totalGen += d.geracao[idx];
+        }
+        if (idx >= 0 && d.saldo_geradora && typeof d.saldo_geradora[idx] === 'number') {
+          totalSaldoGer += d.saldo_geradora[idx];
+        }
+
+        periodosAte.forEach(p => {
+          const pIdx = d.periodos.indexOf(p);
+          if (pIdx >= 0 && typeof d.geracao[pIdx] === 'number') {
+            totalGenAcum += d.geracao[pIdx];
+          }
+        });
+      }
+
+      if (d.rec_periodos && d.recebimento) {
+        const ri = d.rec_periodos.indexOf(selectedPeriodo);
+        if (ri >= 0 && typeof d.recebimento[ri] === 'number') {
+          totalRec += d.recebimento[ri];
+        }
+      }
+
+      if (d.recebedoras_historico && d.recebedoras_historico[selectedPeriodo]) {
+        const hp = d.recebedoras_historico[selectedPeriodo];
+        hp.forEach(r => {
+          if (r.Modalidade && r.Modalidade.toLowerCase().includes('geradora')) return;
+          if (!ucsSeenKPI.has(r.UC_short)) {
+            ucsSeenKPI.add(r.UC_short);
+            totalSaldo += (r.SaldoAtual || 0);
+          }
+        });
+      }
+    });
+  }
+
+  const efic = pct(totalRec, totalGen);
+  const perdas = totalGen - totalRec;
+
+  const cards = [
+    { label: 'Geração Total Mês', value: fmt(totalGen) + ' kWh', sub: 'Todas as usinas · ' + (selectedPeriodo || ''), cls: '' },
+    { label: 'Geração Acumulada', value: fmt(totalGenAcum) + ' kWh', sub: 'Acumulado até ' + (selectedPeriodo || ''), cls: 'green', vcls: 'green' },
+    { label: 'Recebimento Total', value: fmt(totalRec) + ' kWh', sub: 'Soma instalações recebedoras', cls: '', vcls: '' },
+    { label: 'Eficiência Rateio', value: efic + '%', sub: 'Recebido ÷ Gerado', cls: efic >= 90 ? '' : 'yellow', vcls: efic >= 90 ? 'green' : efic >= 70 ? 'yellow' : 'red' },
+    { label: 'Saldo Geradora(s)', value: fmt(totalSaldoGer) + ' kWh', sub: 'Ver detalhamento por usina', cls: 'yellow clickable-card', vcls: '', action: 'showModalGeradoras()' },
+    { label: 'Perdas / Diferença', value: fmt(perdas) + ' kWh', sub: 'Geração não distribuída', cls: perdas > 1000 ? 'red' : 'yellow', vcls: perdas > 1000 ? 'red' : 'yellow' },
+    { label: 'Saldo Acumulado', value: fmt(totalSaldo) + ' kWh', sub: 'Ver top recebedoras', cls: 'purple clickable-card', vcls: '', action: 'showModalRecebedoras()' },
+    { label: 'Usinas Ativas', value: DATA.usinas ? DATA.usinas.length : 0, sub: 'Geração compartilhada', cls: '' }
+  ];
+
+  cards.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'kpi-card ' + c.cls;
+    div.innerHTML = `<div class="kpi-label">${c.label}</div><div class="kpi-value ${c.vcls}">${c.value}</div><div class="kpi-sub">${c.sub}</div>`;
+    if (c.action) {
+      div.setAttribute('onclick', c.action);
+    }
+    grid.appendChild(div);
+  });
+}
+
+// ===================== DONUT GRID =====================
+function renderDonuts() {
+  const grid = document.getElementById('donut-grid');
+  grid.innerHTML = '';
+
+  DATA.usinas.forEach(usina => {
+    const d = DATA.dashboard_data[usina];
+    const idx = d.periodos.indexOf(selectedPeriodo);
+    const gen = idx >= 0 ? d.geracao[idx] : 0;
+    const ri = d.rec_periodos.indexOf(selectedPeriodo);
+    const rec = ri >= 0 ? d.recebimento[ri] : 0;
+    const efic = gen > 0 ? Math.round(rec/gen*100) : 0;
+    const color = getEficienciaColor(efic);
+    const shortName = usina.replace('UFV ','');
+
+    const card = document.createElement('div');
+    card.className = 'donut-card' + (usina === selectedUsina ? ' selected' : '');
+    card.innerHTML = `
+      <div class="donut-name">${shortName}</div>
+      <div class="donut-wrap">
+        <canvas id="donut-${usina.replace(/\s/g,'_')}" width="90" height="90"></canvas>
+        <div class="donut-pct" style="color:${color}">${efic}%</div>
+      </div>
+      <div class="donut-gen">Gen: <b>${fmt(gen)}</b> kWh</div>
+      <div class="donut-gen">Rec: <b>${fmt(rec)}</b> kWh</div>
+    `;
+    card.onclick = () => { selectedUsina = usina; renderAll(); };
+    grid.appendChild(card);
+
+    requestAnimationFrame(() => {
+      const ctx = document.getElementById('donut-' + usina.replace(/\s/g,'_'));
+      if (!ctx) return;
+      if (donutCharts[usina]) { donutCharts[usina].destroy(); }
+      donutCharts[usina] = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          datasets: [{
+            data: [rec, Math.max(0, gen - rec)],
+            backgroundColor: [color, 'rgba(255,255,255,0.05)'],
+            borderWidth: 0,
+            hoverOffset: 0
+          }]
+        },
+        options: {
+          cutout: '70%',
+          plugins: { legend: { display: false }, tooltip: { enabled: false } },
+          animation: { duration: 600 }
+        }
+      });
+    });
+  });
+}
+
+// ===================== CHART GER vs REC =====================
+function renderChartGerRec() {
+  const d = DATA.dashboard_data[selectedUsina];
+  const label = document.getElementById('chart-usina-label');
+  label.textContent = selectedUsina;
+
+  if (chartGerRec) chartGerRec.destroy();
+  const ctx = document.getElementById('chartGerRec').getContext('2d');
+  chartGerRec = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: d.periodos,
+      datasets: [
+        {
+          label: 'Geração (kWh)',
+          data: d.geracao,
+          backgroundColor: 'rgba(0,212,170,0.25)',
+          borderColor: '#00d4aa',
+          borderWidth: 2,
+          borderRadius: 4,
+          order: 2
+        },
+        {
+          label: 'Recebimento (kWh)',
+          data: d.recebimento.map(v => Math.round(v)),
+          backgroundColor: 'rgba(245,158,11,0.25)',
+          borderColor: '#f59e0b',
+          borderWidth: 2,
+          borderRadius: 4,
+          order: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 11 } } },
+        tooltip: { mode: 'index', intersect: false }
+      },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } } },
+        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 10 }, callback: v => fmt(v) } }
+      }
+    }
+  });
+}
+
+// ===================== CHART RATEIO =====================
+function renderChartRateio() {
+  const d = DATA.dashboard_data[selectedUsina];
+  document.getElementById('chart-rateio-label').textContent = selectedUsina;
+  const recs = d.recebedoras_historico && d.recebedoras_historico[selectedPeriodo] ? d.recebedoras_historico[selectedPeriodo].filter(r => r.Quota_pct > 0) : [];
+
+  const labels = recs.map(r => (r.Usina_Origem || getNome(r.UC_short)).substring(0,22));
+  const quotas = recs.map(r => r.Quota_pct);
+  const colors = ['#00d4aa','#f59e0b','#6366f1','#ef4444','#10b981','#ec4899','#8b5cf6','#f97316'];
+
+  if (chartRateio) chartRateio.destroy();
+  const ctx = document.getElementById('chartRateio').getContext('2d');
+  chartRateio = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{
+        data: quotas,
+        backgroundColor: colors.slice(0, recs.length).map(c => c + 'cc'),
+        borderColor: colors.slice(0, recs.length),
+        borderWidth: 2,
+        hoverOffset: 8
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 }, boxWidth: 12, padding: 10 }
+        },
+        tooltip: {
+          callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed.toFixed(2)}%` }
+        }
+      }
+    }
+  });
+}
+
+// ===================== USINA TABS =====================
+function renderUsinaTabs() {
+  const cont = document.getElementById('usina-tabs');
+  cont.innerHTML = '';
+  DATA.usinas.forEach(u => {
+    const btn = document.createElement('button');
+    btn.className = 'usina-tab' + (u === selectedUsina ? ' active' : '');
+    btn.textContent = u;
+    btn.onclick = () => { selectedUsina = u; renderAll(); };
+    cont.appendChild(btn);
+  });
+}
+
+// ===================== TABLE =====================
+function renderTable() {
+  const d = DATA.dashboard_data[selectedUsina];
+  const up = d.ultimo_periodo;
+  const idx = d.periodos.indexOf(selectedPeriodo);
+  const gen = idx >= 0 ? d.geracao[idx] : 0;
+
+  if (selectedUsina === 'GLOBO EIRELI') {
+    document.getElementById('table-usina-title').textContent = 'GLOBO EIRELI · Usinas Injetoras';
+  } else {
+    document.getElementById('table-usina-title').textContent = selectedUsina + ' · Instalações Recebedoras';
+  }
+  const badge = document.getElementById('table-periodo-badge');
+  badge.textContent = selectedPeriodo;
+
+  // Buscar recebedoras do período selecionado
+  const tbody = document.getElementById('rec-tbody');
+  tbody.innerHTML = '';
+
+  const recs = d.recebedoras_historico && d.recebedoras_historico[selectedPeriodo] ? d.recebedoras_historico[selectedPeriodo] : [];
+
+  if (recs.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px">Sem dados de recebedoras neste período</td></tr>';
+    return;
+  }
+
+  recs.forEach(r => {
+    let nome = getNome(r.UC_short);
+    if (r.Usina_Origem && r.Usina_Origem.trim().length > 0) {
+      nome = r.Usina_Origem;
+    }
+    const quota = r.Quota_pct || 0;
+    const consumo = r.Consumo || 0;
+    const compensacao = r.Compensacao || 0;
+    const rec = r.Recebimento || 0;
+    const saldo = r.SaldoAtual || 0;
+    const barW = Math.min(quota, 100);
+
+    let statusSaldo = '<span class="badge ok">OK</span>';
+    if (saldo > 20000) statusSaldo = '<span class="badge crit">Saldo Alto ⚠</span>';
+    else if (saldo > 5000) statusSaldo = '<span class="badge warn">Acumulando</span>';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3)">${r.UC_short}</span></td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${nome}">${nome}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="quota-num" style="color:${quota>80?'#10b981':quota>30?'#f59e0b':'#94a3b8'}">${quota.toFixed(2)}%</span>
+          <div class="quota-bar-wrap" style="width:80px">
+            <div class="quota-bar ${barW>=100?'over':''}" style="width:${barW}%"></div>
+          </div>
+        </div>
+      </td>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px">${fmt(consumo)}</span></td>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--yellow);font-weight:bold">${fmt(compensacao)}</span></td>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--accent)">${fmt(rec)}</span></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+           <span class="saldo-num ${saldo>5000?'alto':''}">${fmt(saldo)}</span>
+           ${statusSaldo}
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ===================== MODAL =====================
+function closeModal() { document.getElementById('saldo-modal').classList.remove('active'); }
+
+function showModalGeradoras() {
+  document.getElementById('modal-title').textContent = `Saldo Retido nas Geradoras (${selectedPeriodo})`;
+  document.getElementById('modal-col1').textContent = 'USINA GERADORA';
+  const tbody = document.getElementById('modal-tbody');
+  tbody.innerHTML = '';
+  
+  let total = 0;
+  
+  DATA.usinas.forEach(u => {
+    const d = DATA.dashboard_data[u];
+    const idx = d.periodos.indexOf(selectedPeriodo);
+    if (idx >= 0 && d.saldo_geradora && d.saldo_geradora[idx] > 0) {
+      const val = d.saldo_geradora[idx];
+      total += val;
+      tbody.innerHTML += `<tr><td><div style="font-weight:600">${u}</div></td><td style="text-align:right; font-family:'JetBrains Mono',monospace; color:var(--yellow); font-size:14px; font-weight:700">${fmt(val)}</td></tr>`;
+    }
+  });
+  
+  if (total === 0) {
+    tbody.innerHTML = `<tr><td colspan="2" style="text-align:center;color:var(--text3);padding:24px">Nenhum saldo retido neste período.</td></tr>`;
+  }
+  
+  document.getElementById('saldo-modal').classList.add('active');
+}
+
+function showModalRecebedoras() {
+  document.getElementById('modal-title').textContent = `Top Saldos Acumulados - Recebedoras (${selectedPeriodo})`;
+  document.getElementById('modal-col1').textContent = 'CONSORCIADO';
+  const tbody = document.getElementById('modal-tbody');
+  tbody.innerHTML = '';
+  
+  let ucsMap = {};
+  
+  DATA.usinas.forEach(u => {
+    if (u === 'GLOBO EIRELI') return;
+    const d = DATA.dashboard_data[u];
+    const hp = d.recebedoras_historico && d.recebedoras_historico[selectedPeriodo] ? d.recebedoras_historico[selectedPeriodo] : [];
+    hp.forEach(r => {
+      if (r.Modalidade && r.Modalidade.toLowerCase().includes('geradora')) return;
+      if (r.SaldoAtual > 0) {
+        const ucKey = r.UC_short;
+        if (!ucsMap[ucKey] || ucsMap[ucKey].saldo < r.SaldoAtual) {
+          ucsMap[ucKey] = { uc: ucKey, nome: getNome(ucKey), saldo: r.SaldoAtual, usina: u };
+        }
+      }
+    });
+  });
+  
+  let arr = Object.values(ucsMap);
+  arr.sort((a,b) => b.saldo - a.saldo);
+  
+  if (arr.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="2" style="text-align:center;color:var(--text3);padding:24px">Nenhum saldo acumulado.</td></tr>`;
+  } else {
+    arr.forEach(item => {
+      tbody.innerHTML += `<tr>
+        <td>
+          <div style="font-weight:600">${item.nome}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px">${item.usina}</div>
+        </td>
+        <td style="text-align:right; font-family:'JetBrains Mono',monospace; color:var(--accent4); font-size:14px; font-weight:700">${fmt(item.saldo)}</td>
+      </tr>`;
+    });
+  }
+  
+  document.getElementById('saldo-modal').classList.add('active');
+}
+
+// ===================== RENDER ALL =====================
+function renderAll() {
+  try { renderPeriodButtons(); } catch(e) { console.error('Error in renderPeriodButtons:', e); }
+  try { renderKPIs(); } catch(e) { console.error('Error in renderKPIs:', e); }
+  try { renderDonuts(); } catch(e) { console.error('Error in renderDonuts:', e); }
+  try { renderChartGerRec(); } catch(e) { console.error('Error in renderChartGerRec:', e); }
+  try { renderChartRateio(); } catch(e) { console.error('Error in renderChartRateio:', e); }
+  try { renderUsinaTabs(); } catch(e) { console.error('Error in renderUsinaTabs:', e); }
+  try { renderTable(); } catch(e) { console.error('Error in renderTable:', e); }
+}
+
+// INIT
+renderAll();
+
+function forceAppRefresh() {
+  const btn = document.querySelector('.btn-refresh');
+  if (btn) {
+    btn.style.opacity = '0.5';
+    btn.innerHTML = `<span>Atualizando...</span>`;
+  }
+  
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(registrations => {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
+      caches.keys().then(keys => {
+        return Promise.all(keys.map(key => caches.delete(key)));
+      }).then(() => {
+        window.location.reload(true);
+      });
+    }).catch(() => {
+      window.location.reload(true);
+    });
+  } else {
+    window.location.reload(true);
+  }
+}
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(err => {
+      console.log('SW falhou: ', err);
+    });
+  });
+}
+</script>
+</body>
+</html>
+
